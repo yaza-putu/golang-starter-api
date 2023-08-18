@@ -23,6 +23,20 @@
     make test
   ```
 
+## Zoro command
+- make migration
+  ```bash
+    go run zoro.go make:migration file_name
+  ```
+- migration up
+  ```bash
+    go run zoro.go migrate:up
+  ```
+- migration down
+  ```bash
+    go run zoro.go migrate:down
+  ```
+
 ## Stack 
 - [Echo](https://echo.labstack.com)
 - [Gorm](https://gorm.io)
