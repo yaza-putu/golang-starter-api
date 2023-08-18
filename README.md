@@ -4,7 +4,7 @@
 ## How to start
 - install depedency
   ```bash
-    make install
+    make tidy
   ```
 - copy environment
   ```bash

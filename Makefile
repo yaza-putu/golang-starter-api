@@ -10,5 +10,5 @@ test:
 config:
 	cp .sample.yml config.yml
 
-install:
+tidy:
 	go mod tidy
