@@ -1,4 +1,4 @@
-// Package response json
+// Package response api
 // default response
 // code : 200
 // status : true
@@ -10,13 +10,13 @@ type (
 	optFunc func(*res)
 
 	res struct {
-		Code    uint16 `json:"code"`
-		Status  bool   `json:"status"`
-		Data    any    `json:"data"`
-		Message any    `json:"message"`
+		Code    int  `json:"code"`
+		Status  bool `json:"status"`
+		Data    any  `json:"data"`
+		Message any  `json:"message"`
 	}
 
-	ResData struct {
+	DataApi struct {
 		res
 	}
 )
@@ -30,8 +30,11 @@ func defaultResponse() res {
 	}
 }
 
-func SetCode(code uint16) optFunc {
+func SetCode(code int) optFunc {
 	return func(r *res) {
+		if code != 200 {
+			r.Status = false
+		}
 		r.Code = code
 	}
 }
@@ -61,7 +64,7 @@ func (r *res) GetStatus() bool {
 	return r.Status
 }
 
-func (r *res) GetCode() uint16 {
+func (r *res) GetCode() int {
 	return r.Code
 }
 
@@ -73,14 +76,14 @@ func (r *res) GetMessage() any {
 	return r.Message
 }
 
-func Json(opts ...optFunc) *ResData {
+func Api(opts ...optFunc) DataApi {
 	o := defaultResponse()
 
 	for _, fn := range opts {
 		fn(&o)
 	}
 
-	return &ResData{
+	return DataApi{
 		res: o,
 	}
 }
