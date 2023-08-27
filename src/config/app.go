@@ -9,6 +9,7 @@ type app struct {
 	Key         string
 	Debug       bool
 	Environment string
+	Lang        string
 }
 
 func App() app {
@@ -17,5 +18,6 @@ func App() app {
 		Key:         viper.GetString("app.key"),
 		Debug:       viper.GetBool("app.debug"),
 		Environment: viper.GetString("app.environment"),
+		Lang:        viper.GetString("app.lang"),
 	}
 }

@@ -41,7 +41,7 @@ func SetCode(code int) optFunc {
 
 func SetStatus(status bool) optFunc {
 	return func(r *res) {
-		if r.Code == 200 {
+		if r.Status == false {
 			r.Code = 500
 		}
 		r.Status = status

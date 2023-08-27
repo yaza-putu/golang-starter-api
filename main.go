@@ -1,6 +1,8 @@
 package main
 
-import "yaza/src/core"
+import (
+	"yaza/src/core"
+)
 
 func main() {
 	// load env

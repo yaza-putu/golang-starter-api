@@ -36,7 +36,30 @@
   ```bash
     go run zoro.go migrate:down
   ```
-
+  
+## Validation Unique With Struct Tag
+- unique
+```go
+type v struct {
+	Name string `validate:"unique=table_name:column_name"`
+}
+// ecample
+type v struct {
+Name string `validate:"unique=users:name"`
+}
+```
+- unique with ignore
+```go
+type v struct {
+Name string `validate:"unique=table_name:column_name:ignore_with_field_name"`
+ID   string `validate:"required"`
+}
+// example
+type v struct {
+Name string `validate:"unique=users:name:ID"`
+ID   string `validate:"required"`
+}
+```
 ## Stack 
 - [Echo](https://echo.labstack.com)
 - [Gorm](https://gorm.io)

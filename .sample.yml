@@ -3,6 +3,7 @@ app:
   key:
   debug: true
   environment: dev
+  lang: en
 
 host:
   name: "localhost"
