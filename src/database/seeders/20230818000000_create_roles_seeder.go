@@ -10,14 +10,8 @@ import (
 func init() {
 	database.SeederRegister(func(db *gorm.DB) error {
 		m := model.Roles{
-			model.Role{
-				ID:   model.AdminId,
-				Name: "Admin",
-			},
-			model.Role{
-				ID:   model.UserId,
-				Name: "User",
-			},
+			model.Role{ID: model.AdminId, Name: "Admin"},
+			model.Role{ID: model.UserId, Name: "User"},
 		}
 
 		return db.Create(&m).Error
