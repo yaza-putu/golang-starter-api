@@ -9,6 +9,7 @@ import (
 	"yaza/src/core"
 	"yaza/src/database"
 	_ "yaza/src/database/migrations"
+	_ "yaza/src/database/seeders"
 )
 
 func main() {
@@ -26,6 +27,8 @@ func main() {
 			"- make:migration",
 			"- migration:up",
 			"- migration:down",
+			"- make:seeder",
+			"- seed:up",
 		}
 		for _, v := range m {
 			fmt.Println(v)
@@ -45,6 +48,12 @@ func main() {
 			case "migrate:down":
 				command.downMigration()
 				break
+			case "make:seeder":
+				command.newSeeder()
+				break
+			case "seed:up":
+				command.upSeeder()
+				break
 			}
 		}
 	}
@@ -56,6 +65,8 @@ type (
 		newMigration() bool
 		upMigration() bool
 		downMigration() bool
+		newSeeder() bool
+		upSeeder() bool
 	}
 )
 
@@ -116,4 +127,49 @@ func (z *zoroCommand) downMigration() bool {
 		fmt.Println("Drop collections successfully")
 		return true
 	}
+}
+
+func (z *zoroCommand) upSeeder() bool {
+	err := database.SeederUp()
+
+	if err != nil {
+		log.Fatal(err)
+		return false
+	} else {
+		fmt.Println("Run seeders successfully")
+		return true
+	}
+}
+
+func (z *zoroCommand) newSeeder() bool {
+	if len(os.Args) != 3 {
+		fmt.Println("ex : make:seeder name-of-file")
+		return false
+	}
+
+	// file
+	fName := fmt.Sprintf("./src/database/seeders/%s_create_%s_seeder.go", time.Now().Format("20060102150405"), os.Args[2])
+
+	// from template
+	from, err := os.Open("./src/database/seeder.stub")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer from.Close()
+
+	// to file
+	to, err := os.OpenFile(fName, os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer to.Close()
+	// copy file with template
+	_, err = io.Copy(to, from)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("New seeder : %s\n", fName)
+
+	return true
 }

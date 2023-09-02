@@ -1,0 +1,18 @@
+package seeders
+
+import (
+    "yaza/src/database"
+    "yaza/src/utils"
+	"gorm.io/gorm"
+)
+
+/// please replace &ModelName{} and insert data
+func init()  {
+	database.SeederRegister(func(db *gorm.DB) error {
+		m := model.Name{
+            ID: utils.Uid(13),
+		}
+
+		return db.Create(&m).Error
+	})
+}
