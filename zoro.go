@@ -10,6 +10,7 @@ import (
 	"yaza/src/database"
 	_ "yaza/src/database/migrations"
 	_ "yaza/src/database/seeders"
+	"yaza/src/utils"
 )
 
 func main() {
@@ -24,6 +25,7 @@ func main() {
 
 		// migration collection
 		m := []string{
+			"- key:generate",
 			"- make:migration",
 			"- migration:up",
 			"- migration:down",
@@ -54,6 +56,9 @@ func main() {
 			case "seed:up":
 				command.upSeeder()
 				break
+			case "key:generate":
+				command.keyGenerate()
+				break
 			}
 		}
 	}
@@ -67,6 +72,7 @@ type (
 		downMigration() bool
 		newSeeder() bool
 		upSeeder() bool
+		keyGenerate() bool
 	}
 )
 
@@ -171,5 +177,15 @@ func (z *zoroCommand) newSeeder() bool {
 	}
 	fmt.Printf("New seeder : %s\n", fName)
 
+	return true
+}
+func (z *zoroCommand) keyGenerate() bool {
+	token := utils.Key(51)
+	refresh := utils.Key(51)
+	passphrase := utils.Key(32)
+
+	fmt.Println("Generate key successfully")
+	fmt.Println("Please copy bellow to config.yml")
+	fmt.Println(fmt.Sprintf("key: \n token: %s \n refresh: %s \n passphrase: %s", token, refresh, passphrase))
 	return true
 }

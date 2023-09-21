@@ -8,7 +8,7 @@ test:
 	go test -race ./...
 
 config:
-	cp .sample.yml config.yml
+	cp .config-sample.yml .config.yml
 
 tidy:
 	go mod tidy

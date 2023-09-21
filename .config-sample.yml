@@ -1,9 +1,13 @@
 app:
   name: "Golang Starter Project"
-  key:
   debug: true
   environment: dev
   lang: en
+
+key:
+  token:
+  refresh:
+  passphrase:
 
 host:
   name: "localhost"

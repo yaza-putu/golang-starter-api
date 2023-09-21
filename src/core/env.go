@@ -6,7 +6,7 @@ import (
 )
 
 func Env() {
-	viper.SetConfigName("config")
+	viper.SetConfigName(".config")
 	viper.SetConfigType("yml")
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()
