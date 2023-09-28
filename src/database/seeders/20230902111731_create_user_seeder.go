@@ -3,31 +3,31 @@ package seeders
 import (
 	"gorm.io/gorm"
 	"time"
-	"yaza/src/app/auth/model"
+	"yaza/src/app/auth/entities"
 	"yaza/src/database"
 	"yaza/src/utils"
 )
 
-// / please replace &ModelName{} and insert data
+// / please replace &entities.Name{} and insert data
 func init() {
 	database.SeederRegister(func(db *gorm.DB) error {
-		m := model.Users{
-			model.User{
+		m := entities.Users{
+			entities.User{
 				ID:       utils.Uid(13),
 				Name:     "Admin",
 				Email:    "admin@mail.com",
 				Password: utils.Bcrypt("Password1"),
-				Roles: model.Roles{
-					model.Role{ID: model.AdminId, CreatedAt: time.Now()},
+				Roles: entities.Roles{
+					entities.Role{ID: entities.AdminId, CreatedAt: time.Now()},
 				},
 			},
-			model.User{
+			entities.User{
 				ID:       utils.Uid(13),
 				Name:     "User",
 				Email:    "user@mail.com",
 				Password: utils.Bcrypt("Password1"),
-				Roles: model.Roles{
-					model.Role{ID: model.UserId, CreatedAt: time.Now()},
+				Roles: entities.Roles{
+					entities.Role{ID: entities.UserId, CreatedAt: time.Now()},
 				},
 			},
 		}

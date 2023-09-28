@@ -6,10 +6,10 @@ import (
 	"gorm.io/gorm"
 )
 
-/// please replace &ModelName{} and insert data
+/// please replace &entities.Name{} and insert data
 func init()  {
 	database.SeederRegister(func(db *gorm.DB) error {
-		m := model.Name{
+		m := entities.Name{
             ID: utils.Uid(13),
 		}
 

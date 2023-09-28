@@ -6,7 +6,7 @@ import (
 	"yaza/src/database"
 )
 
-// / please replace or change &ModelName{}
+// / please replace or change &entities.Name{}
 // / AutoMigrate will create tables, missing foreign keys, constraints, columns and indexes.
 // It will change existing column’s type if its size, precision, nullable changed.
 // It WON’T delete unused columns to protect your data.

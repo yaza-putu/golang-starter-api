@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/gommon/log"
 	"strings"
 	"time"
-	"yaza/src/app/auth/model"
+	"yaza/src/app/auth/entities"
 	"yaza/src/config"
 )
 
@@ -38,7 +38,7 @@ func NewToken() TokenInterface {
 // return arg1 string token
 // return arg2 string refresh token
 // return arg3 error error
-func (t *tokenService) Create(user model.User) (string, string, error) {
+func (t *tokenService) Create(user entities.User) (string, string, error) {
 	// create token
 	token, err := t.generateToken(&jwtTokenClaims{
 		ID:    user.ID,
@@ -69,9 +69,9 @@ func (t *tokenService) Create(user model.User) (string, string, error) {
 	return token, refresh, nil
 }
 
-func (t *tokenService) Refresh(token string) (string, error) {
+func (t *tokenService) Refresh(rToken string) (string, error) {
 	// token string to slice
-	sToken := strings.Split(token, ".")
+	sToken := strings.Split(rToken, ".")
 	if len(sToken) != 3 {
 		return "", errors.New("token Invalid")
 	}
@@ -84,7 +84,7 @@ func (t *tokenService) Refresh(token string) (string, error) {
 		log.Error(err)
 	}
 	// claim data from refresh token
-	var tx, err = jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+	var tx, err = jwt.ParseWithClaims(rToken, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(config.Key().Refresh), nil
 	})
 	if err != nil {
