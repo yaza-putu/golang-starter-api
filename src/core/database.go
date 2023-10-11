@@ -35,7 +35,6 @@ func Database() {
 	case "mysql":
 		mysqlDriver()
 		break
-
 	default:
 		log.Panic("Database Driver Not Found")
 	}

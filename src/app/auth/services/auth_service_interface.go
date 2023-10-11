@@ -1,8 +1,11 @@
 package services
 
-import "yaza/src/http/response"
+import (
+	"context"
+	"yaza/src/http/response"
+)
 
 type AuthInterface interface {
-	Login(email string, password string) response.DataApi
-	Refresh(oToken string) response.DataApi
+	Login(ctx context.Context, email string, password string) response.DataApi
+	Refresh(ctx context.Context, oToken string) response.DataApi
 }
