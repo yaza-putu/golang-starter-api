@@ -12,10 +12,10 @@ type authService struct {
 	userRepository repositories.UserInterface
 }
 
-func NewAuthService() AuthInterface {
+func NewAuthService(u repositories.UserInterface, t TokenInterface) AuthInterface {
 	return &authService{
-		userRepository: repositories.NewUserRepository(),
-		tokenService:   NewToken(),
+		userRepository: u,
+		tokenService:   t,
 	}
 }
 
