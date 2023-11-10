@@ -6,8 +6,8 @@ import (
 )
 
 func Env() {
-	viper.SetConfigName(".config")
-	viper.SetConfigType("yml")
+	viper.SetConfigName(".env")
+	viper.SetConfigType("env")
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()
 	err := viper.ReadInConfig() // Find and read the config file

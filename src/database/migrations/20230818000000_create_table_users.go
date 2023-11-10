@@ -1,9 +1,9 @@
 package migrations
 
 import (
+	"github.com/yaza-putu/golang-starter-api/src/app/auth/entity"
+	"github.com/yaza-putu/golang-starter-api/src/database"
 	"gorm.io/gorm"
-	"yaza/src/app/auth/entities"
-	"yaza/src/database"
 )
 
 /// please replace or change &entities.Name{}
@@ -13,8 +13,8 @@ import (
 
 func init() {
 	database.MigrationRegister(func(db *gorm.DB) error {
-		return db.AutoMigrate(&entities.User{})
+		return db.AutoMigrate(&entity.User{})
 	}, func(db *gorm.DB) error {
-		return db.Migrator().DropTable(&entities.User{})
+		return db.Migrator().DropTable(&entity.User{})
 	})
 }

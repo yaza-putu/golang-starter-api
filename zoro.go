@@ -2,20 +2,22 @@ package main
 
 import (
 	"fmt"
+	"github.com/yaza-putu/golang-starter-api/src/core"
+	"github.com/yaza-putu/golang-starter-api/src/database"
+	_ "github.com/yaza-putu/golang-starter-api/src/database/migrations"
+	_ "github.com/yaza-putu/golang-starter-api/src/database/seeders"
+	"github.com/yaza-putu/golang-starter-api/src/logger"
+	"github.com/yaza-putu/golang-starter-api/src/utils"
 	"io"
-	"log"
 	"os"
 	"time"
-	"yaza/src/core"
-	"yaza/src/database"
-	_ "yaza/src/database/migrations"
-	_ "yaza/src/database/seeders"
-	"yaza/src/utils"
 )
 
 func main() {
-	core.Env()
-	core.Database()
+	if os.Args[1] != "key:generate" {
+		core.Env()
+		core.Database()
+	}
 
 	command := New()
 
@@ -27,7 +29,7 @@ func main() {
 		m := []string{
 			"- key:generate",
 			"- make:migration",
-			"- migration:up",
+			"- migrate:up",
 			"- migration:down",
 			"- make:seeder",
 			"- seed:up",
@@ -91,23 +93,19 @@ func (z *zoroCommand) newMigration() bool {
 
 	// from template
 	from, err := os.Open("./src/database/migration.stub")
-	if err != nil {
-		log.Fatal(err)
-	}
+	logger.New(err, logger.SetType(logger.FATAL))
+
 	defer from.Close()
 
 	// to file
 	to, err := os.OpenFile(fName, os.O_RDWR|os.O_CREATE, 0666)
-	if err != nil {
-		log.Fatal(err)
-	}
+	logger.New(err, logger.SetType(logger.FATAL))
 
 	defer to.Close()
 	// copy file with template
 	_, err = io.Copy(to, from)
-	if err != nil {
-		log.Fatal(err)
-	}
+	logger.New(err, logger.SetType(logger.FATAL))
+
 	fmt.Printf("New migration : %s\n", fName)
 
 	return true
@@ -116,7 +114,7 @@ func (z *zoroCommand) newMigration() bool {
 func (z *zoroCommand) upMigration() bool {
 	err := database.MigrationUp()
 	if err != nil {
-		log.Fatal(err)
+		logger.New(err, logger.SetType(logger.FATAL))
 		return false
 	} else {
 		fmt.Println("Migrating collections successfully")
@@ -127,7 +125,7 @@ func (z *zoroCommand) upMigration() bool {
 func (z *zoroCommand) downMigration() bool {
 	err := database.MigrationDown()
 	if err != nil {
-		log.Fatal(err)
+		logger.New(err, logger.SetType(logger.FATAL))
 		return false
 	} else {
 		fmt.Println("Drop collections successfully")
@@ -139,7 +137,7 @@ func (z *zoroCommand) upSeeder() bool {
 	err := database.SeederUp()
 
 	if err != nil {
-		log.Fatal(err)
+		logger.New(err, logger.SetType(logger.FATAL))
 		return false
 	} else {
 		fmt.Println("Run seeders successfully")
@@ -158,23 +156,18 @@ func (z *zoroCommand) newSeeder() bool {
 
 	// from template
 	from, err := os.Open("./src/database/seeder.stub")
-	if err != nil {
-		log.Fatal(err)
-	}
+	logger.New(err, logger.SetType(logger.FATAL))
 	defer from.Close()
 
 	// to file
 	to, err := os.OpenFile(fName, os.O_RDWR|os.O_CREATE, 0666)
-	if err != nil {
-		log.Fatal(err)
-	}
+	logger.New(err, logger.SetType(logger.FATAL))
 
 	defer to.Close()
 	// copy file with template
 	_, err = io.Copy(to, from)
-	if err != nil {
-		log.Fatal(err)
-	}
+	logger.New(err, logger.SetType(logger.FATAL))
+
 	fmt.Printf("New seeder : %s\n", fName)
 
 	return true
@@ -182,10 +175,9 @@ func (z *zoroCommand) newSeeder() bool {
 func (z *zoroCommand) keyGenerate() bool {
 	token := utils.Key(51)
 	refresh := utils.Key(51)
-	passphrase := utils.Key(32)
 
 	fmt.Println("Generate key successfully")
-	fmt.Println("Please copy bellow to config.yml")
-	fmt.Println(fmt.Sprintf("key: \n token: %s \n refresh: %s \n passphrase: %s", token, refresh, passphrase))
+	fmt.Println("Please copy bellow to .env")
+	fmt.Println(fmt.Sprintf("key_token='%s' \nkey_refresh='%s'", token, refresh))
 	return true
 }

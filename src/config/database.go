@@ -13,11 +13,11 @@ type db struct {
 
 func DB() db {
 	return db{
-		Driver:   viper.GetString("database.driver"),
-		Host:     viper.GetString("database.host"),
-		Port:     viper.GetInt("database.port"),
-		User:     viper.GetString("database.user"),
-		Name:     viper.GetString("database.name"),
-		Password: viper.GetString("database.password"),
+		Driver:   viper.GetString("db_driver"),
+		Host:     viper.GetString("db_host"),
+		Port:     viper.GetInt("db_port"),
+		User:     viper.GetString("db_user"),
+		Name:     viper.GetString("db_name"),
+		Password: viper.GetString("db_password"),
 	}
 }

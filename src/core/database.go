@@ -2,12 +2,13 @@ package core
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
+	"github.com/yaza-putu/golang-starter-api/src/config"
+	"github.com/yaza-putu/golang-starter-api/src/database"
+	"github.com/yaza-putu/golang-starter-api/src/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"log"
-	"yaza/src/config"
-	"yaza/src/database"
 )
 
 func mysqlDriver() {
@@ -20,9 +21,12 @@ func mysqlDriver() {
 
 	if err != nil {
 		if config.App().Debug == true {
-			log.Panic(err)
+			logger.New(err, logger.SetType(logger.FATAL))
 		} else {
-			log.Panic("Database connection error, please enable debug mode to view error")
+			logger.New(
+				errors.New("Database connection error, please enable debug mode to view error"),
+				logger.SetType(logger.FATAL),
+			)
 		}
 	}
 
@@ -36,6 +40,9 @@ func Database() {
 		mysqlDriver()
 		break
 	default:
-		log.Panic("Database Driver Not Found")
+		logger.New(
+			errors.New("Database Driver Not Found"),
+			logger.SetType(logger.FATAL),
+		)
 	}
 }

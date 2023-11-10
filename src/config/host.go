@@ -10,7 +10,7 @@ type host struct {
 // Host configuration
 func Host() host {
 	return host{
-		Name: viper.GetString("host.name"),
-		Port: viper.GetInt("host.port"),
+		Name: viper.GetString("host_name"),
+		Port: viper.GetInt("host_port"),
 	}
 }

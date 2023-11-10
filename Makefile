@@ -4,11 +4,13 @@ build:
 run:
 	go run main.go
 
-test:
-	go test -race ./...
-
 config:
-	cp .config-sample.yml .config.yml
+	cp .env.example .env
 
 tidy:
 	go mod tidy
+key:
+	go run zoro.go key:generate
+
+gotest:
+	go test ./test/...

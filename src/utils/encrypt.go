@@ -5,9 +5,9 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"fmt"
+	"github.com/yaza-putu/golang-starter-api/src/config"
+	"github.com/yaza-putu/golang-starter-api/src/logger"
 	"io"
-	"log"
-	"yaza/src/config"
 )
 
 func Encrypt(s string) string {
@@ -16,22 +16,18 @@ func Encrypt(s string) string {
 
 	// generate a new aes chiper using 32 byte long key
 	c, err := aes.NewCipher(key)
-	if err != nil {
-		log.Fatal(err)
-	}
+	logger.New(err, logger.SetType(logger.FATAL))
 
 	// gcm or Galois/Counter Mode, is a mode of operation
 	// for symmetric key cryptographic block ciphers
 	// - https://en.wikipedia.org/wiki/Galois/Counter_Mode
 	gcm, err := cipher.NewGCM(c)
-	if err != nil {
-		log.Fatal(err)
-	}
+	logger.New(err, logger.SetType(logger.FATAL))
 
 	// creates a new byte array
 	nonce := make([]byte, gcm.NonceSize())
 	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
-		log.Fatal(err)
+		logger.New(err, logger.SetType(logger.FATAL))
 	}
 
 	return string(gcm.Seal(nonce, nonce, data, nil))
@@ -41,14 +37,10 @@ func Decrypt(e string) string {
 	key := []byte(config.Key().Passphrase)
 
 	c, err := aes.NewCipher(key)
-	if err != nil {
-		log.Fatal(err)
-	}
+	logger.New(err, logger.SetType(logger.FATAL))
 
 	gcm, err := cipher.NewGCM(c)
-	if err != nil {
-		log.Fatal(err)
-	}
+	logger.New(err, logger.SetType(logger.FATAL))
 
 	nonceSize := gcm.NonceSize()
 

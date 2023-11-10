@@ -5,17 +5,17 @@ import (
 )
 
 type app struct {
-	Name        string
-	Debug       bool
-	Environment string
-	Lang        string
+	Name   string
+	Lang   string
+	Debug  bool
+	Status string
 }
 
 func App() app {
 	return app{
-		Name:        viper.GetString("app.name"),
-		Debug:       viper.GetBool("app.debug"),
-		Environment: viper.GetString("app.environment"),
-		Lang:        viper.GetString("app.lang"),
+		Name:   viper.GetString("app_name"),
+		Lang:   viper.GetString("app_lang"),
+		Debug:  viper.GetBool("app_debug"),
+		Status: viper.GetString("app_status"),
 	}
 }

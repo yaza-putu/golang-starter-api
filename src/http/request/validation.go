@@ -1,6 +1,7 @@
 package request
 
 import (
+	"errors"
 	"fmt"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/id"
@@ -9,19 +10,46 @@ import (
 	transalation_en "github.com/go-playground/validator/v10/translations/en"
 	transalation_id "github.com/go-playground/validator/v10/translations/id"
 	"github.com/labstack/gommon/log"
+	"github.com/yaza-putu/golang-starter-api/src/config"
+	"github.com/yaza-putu/golang-starter-api/src/database"
+	"github.com/yaza-putu/golang-starter-api/src/http/response"
+	"github.com/yaza-putu/golang-starter-api/src/logger"
 	"strings"
-	"yaza/src/config"
-	"yaza/src/database"
-	"yaza/src/http/response"
 )
 
+type (
+	optFunc func(*attr)
+
+	attr struct {
+		M map[string]string
+	}
+)
+
+func defaultParam() attr {
+	return attr{
+		M: map[string]string{},
+	}
+}
+
+func CustomMessage(m map[string]string) optFunc {
+	return func(p *attr) {
+		p.M = m
+	}
+}
+
 // Validation form
-func Validation(s any, msg map[string]string) (response.DataApi, error) {
+func Validation(s any, opts ...optFunc) (response.DataApi, error) {
+	o := defaultParam()
+
+	for _, fn := range opts {
+		fn(&o)
+	}
+
 	uni := ut.New(id.New(), en.New(), id.New())
 	trans, found := uni.GetTranslator(config.App().Lang)
 
 	if !found {
-		log.Fatal("translator not found")
+		logger.New(errors.New("translator not found"), logger.SetType(logger.FATAL))
 	}
 
 	v := validator.New()
@@ -40,7 +68,7 @@ func Validation(s any, msg map[string]string) (response.DataApi, error) {
 		break
 	default:
 		if err := transalation_en.RegisterDefaultTranslations(v, trans); err != nil {
-			log.Fatal(err)
+			logger.New(err, logger.SetType(logger.FATAL))
 			return response.Api(response.SetStatus(false), response.SetMessage(err)), err
 		}
 		_ = v.RegisterTranslation("unique", trans, func(ut ut.Translator) error {
@@ -57,8 +85,7 @@ func Validation(s any, msg map[string]string) (response.DataApi, error) {
 	if err != nil {
 		return response.Api(response.SetStatus(false), response.SetMessage(err)), err
 	}
-
-	for k, ms := range msg {
+	for k, ms := range o.M {
 		rError := v.RegisterTranslation(k, trans, func(ut ut.Translator) error {
 			return ut.Add(k, fmt.Sprintf("{0} %s", ms), true) // see universal-translator for details
 		}, func(ut ut.Translator, fe validator.FieldError) string {

@@ -1,4 +1,5 @@
 bin
 build
 .idea
-.config.yml
+.env
+logs

@@ -41,9 +41,6 @@ func SetCode(code int) optFunc {
 
 func SetStatus(status bool) optFunc {
 	return func(r *res) {
-		if r.Status == false {
-			r.Code = 500
-		}
 		r.Status = status
 	}
 }
@@ -86,4 +83,8 @@ func Api(opts ...optFunc) DataApi {
 	return DataApi{
 		res: o,
 	}
+}
+
+func TimeOut() DataApi {
+	return Api(SetCode(408), SetMessage("Request timeout or canceled by user"))
 }

@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"github.com/labstack/gommon/log"
+	"github.com/yaza-putu/golang-starter-api/src/logger"
 	bcrypt2 "golang.org/x/crypto/bcrypt"
 )
 
@@ -9,9 +9,8 @@ func Bcrypt(password string) string {
 	bytePass := []byte(password)
 
 	hash, err := bcrypt2.GenerateFromPassword(bytePass, bcrypt2.DefaultCost)
-	if err != nil {
-		log.Error(err)
-	}
+	logger.New(err, logger.SetType(logger.ERROR))
+
 	return string(hash)
 }
 

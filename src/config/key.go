@@ -10,8 +10,8 @@ type key struct {
 
 func Key() key {
 	return key{
-		Token:      viper.GetString("key.token"),
-		Refresh:    viper.GetString("key.refresh"),
-		Passphrase: viper.GetString("key.passphrase"),
+		Token:      viper.GetString("key_token"),
+		Refresh:    viper.GetString("key_refresh"),
+		Passphrase: viper.GetString("key_passphrase"),
 	}
 }

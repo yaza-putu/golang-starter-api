@@ -1,7 +1,7 @@
 package main
 
 import (
-	"yaza/src/core"
+	"github.com/yaza-putu/golang-starter-api/src/core"
 )
 
 func main() {
@@ -11,6 +11,8 @@ func main() {
 	// init database
 	core.Database()
 
+	// redis
+	core.Redis()
 	// start server
 	core.HttpServe()
 }
