@@ -108,4 +108,5 @@ ID   string `validate:"required"`
 - [Echo](https://echo.labstack.com)
 - [Gorm](https://gorm.io)
 - [Env](https://github.com/spf13/viper)
+- [Redis](https://github.com/redis/go-redis)
 
