@@ -1,7 +1,7 @@
 # API Starter Golang
 ![golang](https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Go_Logo_Blue.svg/1200px-Go_Logo_Blue.svg.png)
 
-Suport Redis
+Support Redis
 
 ## How to start
 
