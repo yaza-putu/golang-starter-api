@@ -60,7 +60,6 @@ func (c *goodsRepository) Create(ctx context.Context, gds entity.Goods) (entity.
 		}
 
 		redis_client.Set(ctx, gds.ID, gds)
-		redis_client.Del(ctx, "goods")
 
 		return nil
 	})
@@ -72,13 +71,11 @@ func (c *goodsRepository) Update(ctx context.Context, id string, gds entity.Good
 	d := gds
 	d.ID = id
 	redis_client.Set(ctx, id, d)
-	redis_client.Del(ctx, "goods")
 	return database.Instance.WithContext(ctx).Where("id = ?", id).Updates(&gds).Error
 }
 
 func (c *goodsRepository) Delete(ctx context.Context, id string) error {
 	redis_client.Del(ctx, id)
-	redis_client.Del(ctx, "goods")
 	return database.Instance.WithContext(ctx).Where("id = ?", id).Delete(&c.entity).Error
 }
 
@@ -98,7 +95,6 @@ func (c *goodsRepository) Stock(ctx context.Context, id string, n int) error {
 	logger.New(d.Error, logger.SetType(logger.ERROR))
 
 	redis_client.Set(ctx, id, e)
-	redis_client.Del(ctx, "goods")
 	r := database.Instance.WithContext(ctx).Preload("Category").Model(&entity.Goods{}).Where("id = ?", id).Update("stock", e.Stock+n)
 	return r.Error
 }
@@ -116,8 +112,5 @@ func (c *goodsRepository) All(ctx context.Context, page int, take int) (utils.Pa
 	pagination.Rows = e
 	pagination.CalculatePage(float64(totalRow))
 
-	if totalRow > 0 {
-		redis_client.FindSet(ctx, "goods", pagination)
-	}
 	return pagination, r.Error
 }

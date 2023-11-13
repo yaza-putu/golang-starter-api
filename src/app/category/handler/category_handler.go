@@ -52,14 +52,8 @@ func (c *categoryHandler) All(ctx echo.Context) error {
 
 	timeOutCtx, cancel := context.WithTimeout(context.Background(), time.Second*2)
 	defer cancel()
-	dst := utils.Pagination{}
-	er := redis_client.Get(timeOutCtx, "categories", &dst)
-	if er != nil {
-		r := c.service.All(timeOutCtx, req.Page, req.Take)
-		return ctx.JSON(http.StatusOK, r)
-	} else {
-		return ctx.JSON(http.StatusOK, response.Api(response.SetCode(200), response.SetData(dst)))
-	}
+	r := c.service.All(timeOutCtx, req.Page, req.Take)
+	return ctx.JSON(http.StatusOK, r)
 }
 
 func (c *categoryHandler) Create(ctx echo.Context) error {

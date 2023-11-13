@@ -26,7 +26,6 @@ func (c *categoryRepository) Create(ctx context.Context, cat entity.Category) (e
 	cat.Name = strings.ToTitle(cat.Name)
 	r := database.Instance.WithContext(ctx).Create(&cat)
 	redis_client.Set(ctx, cat.ID, cat)
-	redis_client.Del(ctx, "categories")
 	return cat, r.Error
 }
 
@@ -36,13 +35,11 @@ func (c *categoryRepository) Update(ctx context.Context, id string, cat entity.C
 	d := cat
 	d.ID = id
 	redis_client.Set(ctx, id, d)
-	redis_client.Del(ctx, "categories")
 	return database.Instance.WithContext(ctx).Where("id = ?", id).Updates(&cat).Error
 }
 
 func (c *categoryRepository) Delete(ctx context.Context, id string) error {
 	redis_client.Del(context.Background(), id)
-	redis_client.Del(ctx, "categories")
 	return database.Instance.WithContext(ctx).Where("id = ?", id).Delete(&c.entity).Error
 }
 
@@ -67,10 +64,6 @@ func (c *categoryRepository) All(ctx context.Context, page int, take int) (utils
 
 	pagination.Rows = e
 	pagination.CalculatePage(float64(totalRow))
-
-	if totalRow > 0 {
-		redis_client.FindSet(ctx, "categories", pagination)
-	}
 
 	return pagination, r.Error
 }
