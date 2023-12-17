@@ -175,9 +175,9 @@ func (z *zoroCommand) newSeeder() bool {
 func (z *zoroCommand) keyGenerate() bool {
 	token := utils.Key(51)
 	refresh := utils.Key(51)
-
+	passphrase := utils.Key(32)
 	fmt.Println("Generate key successfully")
 	fmt.Println("Please copy bellow to .env")
-	fmt.Println(fmt.Sprintf("key_token='%s' \nkey_refresh='%s'", token, refresh))
+	fmt.Println(fmt.Sprintf("key_token='%s' \nkey_refresh='%s' \nkey_passphrase='%s'", token, refresh, passphrase))
 	return true
 }

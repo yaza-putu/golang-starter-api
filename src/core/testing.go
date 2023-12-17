@@ -1,4 +1,4 @@
-package utils
+package core
 
 import (
 	"database/sql"
@@ -19,7 +19,7 @@ func EnvTesting() error {
 
 	// Root folder of this project
 	Root := filepath.Join(filepath.Dir(b), "../..")
-	viper.SetConfigName(".env")
+	viper.SetConfigName(".env.test")
 	viper.SetConfigType("env")
 	viper.AddConfigPath(Root)
 	viper.AutomaticEnv()

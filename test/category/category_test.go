@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/suite"
+	eAuth "github.com/yaza-putu/golang-starter-api/src/app/auth/entity"
 	"github.com/yaza-putu/golang-starter-api/src/app/category/entity"
 	"github.com/yaza-putu/golang-starter-api/src/config"
 	"github.com/yaza-putu/golang-starter-api/src/core"
 	"github.com/yaza-putu/golang-starter-api/src/database"
 	response2 "github.com/yaza-putu/golang-starter-api/src/http/response"
 	"github.com/yaza-putu/golang-starter-api/src/utils"
+	"gorm.io/gorm"
 	"net/http"
 	"strings"
 	"testing"
@@ -26,11 +28,46 @@ func TestE2ETestSuite(t *testing.T) {
 }
 
 func (s *e2eTestSuite) SetupSuite() {
-	s.Require().NoError(utils.EnvTesting())
-	s.Require().NoError(utils.DatabaseTesting())
+	s.Require().NoError(core.EnvTesting())
+	s.Require().NoError(core.DatabaseTesting())
 	core.Redis()
+
+	// run migration
+	database.MigrationRegister(func(db *gorm.DB) error {
+		return db.AutoMigrate(&eAuth.User{})
+	}, func(db *gorm.DB) error {
+		return db.Migrator().DropTable(&eAuth.User{})
+	})
+
+	// run seeder
+	database.SeederRegister(func(db *gorm.DB) error {
+		m := eAuth.Users{
+			eAuth.User{
+				ID:       utils.Uid(13),
+				Name:     "User",
+				Email:    "user@mail.com",
+				Password: utils.Bcrypt("Password1"),
+			},
+		}
+
+		return db.Create(&m).Error
+	})
+
+	database.MigrationRegister(func(db *gorm.DB) error {
+		return db.AutoMigrate(&entity.Category{})
+	}, func(db *gorm.DB) error {
+		return db.Migrator().DropTable(&entity.Category{})
+	})
+
+	database.MigrationUp()
+	database.SeederUp()
+
 	go core.HttpServerTesting()
 	Token(s)
+}
+
+func (s *e2eTestSuite) TearDownSuite() {
+	database.MigrationDown()
 }
 
 func Token(s *e2eTestSuite) {
@@ -121,8 +158,7 @@ func (s *e2eTestSuite) TestSuccessCreate() {
 
 	s.NoError(err)
 	s.Equal(http.StatusOK, response.StatusCode)
-	// rollback data
-	s.rollback("CAT 1")
+
 	defer response.Body.Close()
 }
 
@@ -148,10 +184,6 @@ func (s *e2eTestSuite) create(name string) string {
 	return data["id"].(string)
 }
 
-func (s *e2eTestSuite) rollback(name string) {
-	database.Instance.Where("name = ?", name).Delete(&entity.Category{})
-}
-
 func (s *e2eTestSuite) TestSuccessUpdate() {
 	id := s.create("CAT 2")
 
@@ -168,8 +200,7 @@ func (s *e2eTestSuite) TestSuccessUpdate() {
 	s.NoError(err)
 
 	s.Equal(http.StatusOK, response.StatusCode)
-	// rollback data
-	s.rollback("CAT 3")
+
 	defer response.Body.Close()
 }
 
@@ -189,8 +220,7 @@ func (s *e2eTestSuite) TestSuccessFindById() {
 
 	s.NoError(err)
 	s.Equal(http.StatusOK, response.StatusCode)
-	// rollback data
-	s.rollback("CAT 1")
+
 	defer response.Body.Close()
 }
 

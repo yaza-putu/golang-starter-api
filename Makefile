@@ -5,7 +5,7 @@ run:
 	go run main.go
 
 config:
-	cp .env.example .env
+	cp .env.example .env && cp .env.example .env.test
 
 tidy:
 	go mod tidy
