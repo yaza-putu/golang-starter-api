@@ -60,7 +60,7 @@ Project layout design influenced by [standard go project layout](https://github.
   
 
 # Default Login
-email : user@mail.com
+email : admin@mail.com
 
 pass : Password1
 
