@@ -11,12 +11,15 @@ Project layout design influenced by [standard go project layout](https://github.
   # or
   go mod tidy
   ```
-- copy environment
+- copy environment dev, test and set app_status=test for .env.test
   ```bash
   make config
   #or
   cp .env.example .env
+  cp .env.example .env.test
   ```
+
+
 - generate key
   ```bash
     make key
