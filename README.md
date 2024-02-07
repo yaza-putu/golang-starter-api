@@ -23,8 +23,6 @@ Project layout design influenced by [standard go project layout](https://github.
 - generate key
   ```bash
     make key
-    # or
-    go run zoro.go key:generate
   ```
 
 - run dev mode
