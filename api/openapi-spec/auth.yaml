@@ -7,9 +7,9 @@ info:
 servers:
   - url: 'http://localhost:5100/api/v1'
     description: For local mode
-  - url: 'https://staging-api.qila.co.id/api/v1'
+  - url: 'https://sandbox.domain.com/api/v1'
     description: For staging mode
-  - url: 'https://api.qila.co.id/api/v1'
+  - url: 'https://domain.com/api/v1'
     description: For production mode
 paths:
   /token:
@@ -32,10 +32,10 @@ paths:
                 email:
                   type: string
                   format: email
-                  example: admin@qila.co.id
+                  example: admin@mail.com
                 password:
                   type: string
-                  example: 'Pzxyz5@#!$'
+                  example: 'Password1'
           multipart/form-data:
             schema:
               type: object
@@ -47,10 +47,10 @@ paths:
                 email:
                   type: string
                   format: email
-                  example: admin@qila.co.id
+                  example: admin@mail.com
                 password:
                   type: string
-                  example: 'Pzxyz5@#!$'
+                  example: 'Password1'
       responses:
         '200':
           description: ok
