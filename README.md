@@ -1,8 +1,8 @@
-# API Starter Golang
+# Golang Starter Project
 ![golang](https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Go_Logo_Blue.svg/1200px-Go_Logo_Blue.svg.png)
 
-Support Redis
-
+Project layout design influenced by [standard go project layout](https://github.com/golang-standards/project-layout)
+### Note : Be sure to rename the module before beginning the project.
 ## How to start
 
 - install depedency
@@ -23,33 +23,38 @@ Support Redis
     # or
     go run zoro.go key:generate
   ```
-- run migration
-  ```bash
-   go run zoro.go migrate:up
-  ```
 
-- run seeder
-  ```bash
-   go run zoro.go seed:up
-  ```
 - run dev mode
   ```bash
     make run
-    # or
-    go run main.go
   ```
 - build
   ```bash
   make build
-  # or
-  go build main.go
   ```
-  
+
 - run test
   ```bash
    make gotest
-   # or
-   go test ./test/...
+  ```
+
+- make migration
+  ```bash
+   make migration table="name_of_table"
+  ```
+  
+- run migration
+  ```bash
+   make migrate-up
+  ```
+
+- make seeder
+   ```bash
+   make seeder name="name_of_seeder"
+  ```
+- run seeder
+  ```bash
+   make seed-up
   ```
   
 
@@ -57,20 +62,6 @@ Support Redis
 email : user@mail.com
 
 pass : Password1
-
-## Zoro command
-- make migration
-  ```bash
-    go run zoro.go make:migration file_name
-  ```
-- migration up
-  ```bash
-    go run zoro.go migrate:up
-  ```
-- migration down
-  ```bash
-    go run zoro.go migrate:down
-  ```
 
 # Alasan memakai service & repository pattern
 Saya biasanya memakai pattern service dan repository bertujuan memisahkan business logic dengan query logic serta memfungsikan handler untuk fokus pada pengarahan lalulintas data

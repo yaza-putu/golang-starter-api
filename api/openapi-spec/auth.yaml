@@ -1,0 +1,147 @@
+openapi: 3.0.3
+info:
+  title: Auth
+  description: The authentication uses a JWT token mechanism for signing
+   method HS256
+  version: v1
+servers:
+  - url: 'http://localhost:5100/api/v1'
+    description: For local mode
+  - url: 'https://staging-api.qila.co.id/api/v1'
+    description: For staging mode
+  - url: 'https://api.qila.co.id/api/v1'
+    description: For production mode
+paths:
+  /token:
+    post:
+      tags:
+        - Create
+      summary: Create a token
+      description: Two tokens will be generated in response an access token and a refresh token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type : object
+              required: [
+                "email",
+                "password"
+              ]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: admin@qila.co.id
+                password:
+                  type: string
+                  example: 'Pzxyz5@#!$'
+          multipart/form-data:
+            schema:
+              type: object
+              required: [
+                "email",
+                "password"
+              ]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: admin@qila.co.id
+                password:
+                  type: string
+                  example: 'Pzxyz5@#!$'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  data:
+                    type: object
+                    example: {
+                      "access_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHFpbGEuY28uaWQiLCJleHAiOjE3MDY3MDY3NTd9.Ul-iTRe0f43Fv_BH-jsIrD0N7v8q27Dme1uSNMBT2fI",
+                      "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHFpbGEuY28uaWQiLCJvbGRfdG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKbGJXRnBiQ0k2SW1Ga2JXbHVRSEZwYkdFdVkyOHVhV1FpTENKbGVIQWlPakUzTURZM01EWTNOVGQ5LlVsLWlUUmUwZjQzRnZfQkgtanNJckQwTjd2OHEyN0RtZTF1U05NQlQyZkkiLCJleHAiOjE3MDY3OTI1NTd9.x5ArsCOTlEPLl-si3NV1R3BUHicus0rPBNOPlMb6kiU",
+                    }
+                  message:
+                    type: string
+                    example: "Generate token successfully"
+        422:
+          description: "Unprocessable Content"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 422
+                  message:
+                    type: string
+                    example: "bad request"
+                  errors:
+                    type: array
+                    example: [
+                     "email" : ["Email is a required field"],
+                     "password" : ["Password is a required field"]
+                    ]
+
+    put:
+      tags:
+        - Refresh
+      summary: Create a new token
+      description: Generate a new token with a refreshed key token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [
+                "refresh_token"
+              ]
+              properties:
+                refresh_token:
+                  type: string
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHFpbGEuY28uaWQiLCJvbGRfdG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKbGJXRnBiQ0k2SW1Ga2JXbHVRSEZwYkdFdVkyOHVhV1FpTENKbGVIQWlPakUzTURZM01EWTNOVGQ5LlVsLWlUUmUwZjQzRnZfQkgtanNJckQwTjd2OHEyN0RtZTF1U05NQlQyZkkiLCJleHAiOjE3MDY3OTI1NTd9.x5ArsCOTlEPLl-si3NV1R3BUHicus0rPBNOPlMb6kiU"
+          multipart/form-data:
+            schema:
+              type: object
+              required: [
+                "refresh_token"
+              ]
+              properties:
+                refresh_token:
+                  type: string
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHFpbGEuY28uaWQiLCJvbGRfdG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKbGJXRnBiQ0k2SW1Ga2JXbHVRSEZwYkdFdVkyOHVhV1FpTENKbGVIQWlPakUzTURZM01EWTNOVGQ5LlVsLWlUUmUwZjQzRnZfQkgtanNJckQwTjd2OHEyN0RtZTF1U05NQlQyZkkiLCJleHAiOjE3MDY3OTI1NTd9.x5ArsCOTlEPLl-si3NV1R3BUHicus0rPBNOPlMb6kiU"
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {
+                  code : 200,
+                  data : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHFpbGEuY28uaWQiLCJleHAiOjE3MDY3MDY3NTd9.Ul-iTRe0f43Fv_BH-jsIrD0N7v8q27Dme1uSNMBT2fI"
+                }
+        422:
+          description: "Unprocessable Content"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {
+                    code: 422,
+                    message: "bad request",
+                    errors: {
+                      "token": [ "Token is a required field" ]
+                    }
+                  }
+
+
+  

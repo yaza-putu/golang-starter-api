@@ -1,0 +1,18 @@
+package seeders
+
+import (
+    "github.com/yaza-putu/golang-starter-api/internal/database"
+    "github.com/yaza-putu/golang-starter-api/pkg/unique"
+	"gorm.io/gorm"
+)
+
+/// please replace &entities.Name{} and insert data
+func init()  {
+	database.SeederRegister(func(db *gorm.DB) error {
+		m := entities.Name{
+            ID: unique.Uid(13),
+		}
+
+		return db.Create(&m).Error
+	})
+}
