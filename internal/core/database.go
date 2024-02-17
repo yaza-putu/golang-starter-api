@@ -9,6 +9,7 @@ import (
 	"github.com/yaza-putu/golang-starter-api/internal/pkg/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"time"
 )
 
 func mysqlDriver() {
@@ -29,6 +30,15 @@ func mysqlDriver() {
 			)
 		}
 	}
+
+	sqlDb, err := db.DB()
+	if err != nil {
+		logger.New(err, logger.SetType(logger.FATAL))
+	}
+
+	sqlDb.SetMaxIdleConns(config.DB().Idle)
+	sqlDb.SetMaxOpenConns(config.DB().MaxConn)
+	sqlDb.SetConnMaxLifetime(time.Hour * time.Duration(config.DB().ConnLifetime))
 
 	database.Instance = db
 }

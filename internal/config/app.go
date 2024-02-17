@@ -9,6 +9,7 @@ type app struct {
 	Lang   string
 	Debug  bool
 	Status string
+	MaxCpu int
 }
 
 func App() app {
@@ -17,5 +18,6 @@ func App() app {
 		Lang:   viper.GetString("app_lang"),
 		Debug:  viper.GetBool("app_debug"),
 		Status: viper.GetString("app_status"),
+		MaxCpu: viper.GetInt("app_max_cpu"),
 	}
 }
