@@ -69,6 +69,15 @@ dbMock :=  ...
 
 database.Mock(dbMock)
 ```  
+special setting connection gorm in unit test <br>
+set SkipInitializeWithVersion to true 
+```go
+db, err := gorm.Open(mysql.New(mysql.Config{
+    ...
+    SkipInitializeWithVersion: true,
+}), &gorm.Config{})
+```
+
 - if you need mock redis in unit test you can use
 ```go
 // import redis client
