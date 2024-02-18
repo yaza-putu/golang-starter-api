@@ -69,7 +69,7 @@ dbMock :=  ...
 
 database.Mock(dbMock)
 ```  
-special setting connection gorm in unit test <br>
+special setting connection gorm in unit test (mocking) <br>
 set SkipInitializeWithVersion to true 
 ```go
 db, err := gorm.Open(mysql.New(mysql.Config{
