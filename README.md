@@ -59,7 +59,7 @@ Project layout design influenced by [standard go project layout](https://github.
   ```
   
 # How to mock gorm and redis
-Use global variables for the database and redis connections in this template. 
+For this template using global variable for database connection and redis connection 
   - if you need mock database in unit test you can use
  ```go
 // import
