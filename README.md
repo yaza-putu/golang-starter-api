@@ -93,15 +93,6 @@ email : admin@mail.com
 
 pass : Password1
 
-# Alasan memakai service & repository pattern
-Saya biasanya memakai pattern service dan repository bertujuan memisahkan business logic dengan query logic serta memfungsikan handler untuk fokus pada pengarahan lalulintas data
-kalau tidak memakai pattern cendrung kita menulis logika programing pada satu file katakan handler kalau project kecil tidak masalah tetapi jika project besar ini akan sulit di maintenace karena kode program yang banyak dan bercampur
-
-selain pattern di project ini saya menambahkan otomatisasi pembuatan migration dan seeder untuk memudahkan development
-
-
-  
-
 ## Validation Unique With Struct Tag
 - unique
 ```go
@@ -122,7 +113,7 @@ ID   string `validate:"required"`
 // example
 type v struct {
 Name string `validate:"unique=users:name:ID"`
-ID   string `validate:"required"`
+ID   string `validate:"required" json:"id"`
 }
 ```
 ## Stack 
