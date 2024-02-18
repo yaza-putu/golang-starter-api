@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	// set max processor
+	// set max cpu
 	runtime.GOMAXPROCS(config.App().MaxCpu)
 
 	// load env

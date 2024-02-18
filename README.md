@@ -58,6 +58,26 @@ Project layout design influenced by [standard go project layout](https://github.
    make seed-up
   ```
   
+# How to mock gorm and redis
+Use global variables for the database and redis connections in this template. 
+  - if you need mock database in unit test you can use
+ ```go
+// import
+import "qila.co.id/internal/database"
+
+dbMock :=  ...
+
+database.Mock(dbMock)
+```  
+- if you need mock redis in unit test you can use
+```go
+// import redis client
+import redis_client "qila.co.id/internal/pkg/redis"
+
+redisMock := ...
+
+redis_client.Mock(redisMock)
+```
 
 # Default Login
 email : admin@mail.com

@@ -54,3 +54,8 @@ func SeederUp() error {
 	}
 	return nil
 }
+
+// Mock database connection & query
+func Mock(db *gorm.DB) {
+	Instance = db
+}
