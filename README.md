@@ -116,6 +116,28 @@ Name string `validate:"unique=users:name:ID"`
 ID   string `validate:"required" json:"id"`
 }
 ```
+
+# Validation file upload
+```go
+type FileHandler struct {
+  File multipart.File `validate:"required,filetype=image/png image/jpeg image/jpg"`
+}
+
+fs := FileHandler{}
+
+f, err := ctx.FormFile("file")
+if err == nil {
+// send file into FileHandler struct to validate
+  fs.File, err = f.Open()
+  if err != nil {
+    return err
+  }
+}
+// validate with custom validation from go-playground/validator 
+val, err := request.Validation(&fs)
+
+
+```
 ## Stack 
 - [Echo](https://echo.labstack.com)
 - [Gorm](https://gorm.io)

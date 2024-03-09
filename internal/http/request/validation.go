@@ -14,6 +14,9 @@ import (
 	"github.com/yaza-putu/golang-starter-api/internal/database"
 	"github.com/yaza-putu/golang-starter-api/internal/http/response"
 	"github.com/yaza-putu/golang-starter-api/internal/pkg/logger"
+	filePkg "github.com/yaza-putu/golang-starter-api/pkg/file"
+	"mime/multipart"
+	"reflect"
 	"strings"
 )
 
@@ -65,6 +68,14 @@ func Validation(s any, opts ...optFunc) (response.DataApi, error) {
 			t, _ := ut.T("unique", fe.Field())
 			return t
 		})
+
+		_ = v.RegisterTranslation("filetype", trans, func(ut ut.Translator) error {
+			return ut.Add("filetype", fmt.Sprintf("Tipe data dari {0} tidak diijinkan, hanya diijinkan {1}"), true) // see universal-translator for details
+		}, func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("filetype", fe.Field(), fe.Param())
+			return t
+		})
+
 		break
 	default:
 		if err := transalation_en.RegisterDefaultTranslations(v, trans); err != nil {
@@ -77,6 +88,14 @@ func Validation(s any, opts ...optFunc) (response.DataApi, error) {
 			t, _ := ut.T("unique", fe.Field())
 			return t
 		})
+
+		_ = v.RegisterTranslation("filetype", trans, func(ut ut.Translator) error {
+			return ut.Add("filetype", fmt.Sprintf("The type of {0} not allowed, allow only {1}"), true) // see universal-translator for details
+		}, func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("filetype", fe.Field(), fe.Param())
+			return t
+		})
+
 		break
 	}
 
@@ -85,6 +104,13 @@ func Validation(s any, opts ...optFunc) (response.DataApi, error) {
 	if err != nil {
 		return response.Api(response.SetMessage(err)), err
 	}
+
+	err = v.RegisterValidation("filetype", filetype)
+
+	if err != nil {
+		return response.Api(response.SetMessage(err)), err
+	}
+
 	for k, ms := range o.M {
 		rError := v.RegisterTranslation(k, trans, func(ut ut.Translator) error {
 			return ut.Add(k, fmt.Sprintf("{0} %s", ms), true) // see universal-translator for details
@@ -111,6 +137,22 @@ func Validation(s any, opts ...optFunc) (response.DataApi, error) {
 	}
 
 	return response.Api(response.SetCode(200)), nil
+}
+
+func filetype(fl validator.FieldLevel) bool {
+	param := fl.Param()
+	params := strings.Split(param, " ")
+
+	file := fl.Field().Interface().(multipart.File)
+	if reflect.TypeOf(file).Kind() == reflect.Ptr && reflect.TypeOf(file).Elem().Name() == "File" {
+		return false
+	}
+
+	if len(params) < 1 {
+		return false
+	}
+
+	return filePkg.DetectContentType(file, params)
 }
 
 func unique(fl validator.FieldLevel) bool {
