@@ -2,15 +2,18 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
+	"strings"
+	"time"
+
 	"github.com/yaza-putu/golang-starter-api/internal/core"
 	"github.com/yaza-putu/golang-starter-api/internal/database"
 	_ "github.com/yaza-putu/golang-starter-api/internal/database/migrations"
 	_ "github.com/yaza-putu/golang-starter-api/internal/database/seeders"
 	"github.com/yaza-putu/golang-starter-api/internal/pkg/logger"
 	"github.com/yaza-putu/golang-starter-api/pkg/unique"
-	"io"
-	"os"
-	"time"
 )
 
 func main() {
@@ -177,8 +180,47 @@ func (z *zoroCommand) keyGenerate() bool {
 	refresh := unique.Key(51)
 	passphrase := unique.Key(32)
 
+	findAndReplaceByKey("key_token", fmt.Sprintf("'%s'", token))
+	findAndReplaceByKey("key_refresh", fmt.Sprintf("'%s'", refresh))
+	findAndReplaceByKey("key_passphrase", fmt.Sprintf("'%s'", passphrase))
+
 	fmt.Println("Generate key successfully")
-	fmt.Println("Please copy bellow to .env")
-	fmt.Println(fmt.Sprintf("key_token='%s' \nkey_refresh='%s' \nkey_passphrase='%s'", token, refresh, passphrase))
 	return true
+}
+
+func findAndReplaceByKey(key, newValue string) error {
+	filename := ".env"
+	// Read the entire file
+	content, err := ioutil.ReadFile(filename)
+	if err != nil {
+		fmt.Println("file .env not found")
+		return err
+	}
+
+	// Split content by lines
+	lines := strings.Split(string(content), "\n")
+
+	// Find and replace the key if found
+	found := false
+	for i, line := range lines {
+		if strings.HasPrefix(line, key+"=") {
+			lines[i] = key + "=" + newValue
+			found = true
+			break
+		}
+	}
+
+	// If key not found, return an error
+	if !found {
+		return fmt.Errorf("key '%s' not found in file", key)
+	}
+
+	// Write the modified content back to the file
+	output := strings.Join(lines, "\n")
+	err = ioutil.WriteFile(filename, []byte(output), 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
