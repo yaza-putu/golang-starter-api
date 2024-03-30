@@ -3,15 +3,17 @@ package core
 import (
 	"context"
 	"fmt"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
-	"github.com/yaza-putu/golang-starter-api/internal/config"
-	"github.com/yaza-putu/golang-starter-api/internal/routes"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
+	"github.com/yaza-putu/golang-starter-api/internal/config"
+	"github.com/yaza-putu/golang-starter-api/internal/http/middleware"
+	"github.com/yaza-putu/golang-starter-api/internal/routes"
 )
 
 // Routes register and server server
@@ -19,6 +21,8 @@ func HttpServe() {
 	e := echo.New()
 	// set debug mode
 	e.Debug = config.App().Debug
+	// handle error panic in http req & res
+	e.Use(middleware.PanicMiddleware)
 	// register api route
 	routes.Api(e)
 
