@@ -27,7 +27,7 @@ Project layout design influenced by [standard go project layout](https://github.
 
 - run dev mode
   ```bash
-    make run
+    make serve
   ```
 - build
   ```bash

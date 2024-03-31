@@ -1,7 +1,7 @@
 build:
 	GOOS=linux GOARCH=amd64 go build -o build/main cmd/main.go
 
-run:
+serve:
 	go run cmd/main.go
 
 config:
