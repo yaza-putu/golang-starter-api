@@ -2,7 +2,7 @@
 ![golang](https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Go_Logo_Blue.svg/1200px-Go_Logo_Blue.svg.png)
 
 Project layout design influenced by [standard go project layout](https://github.com/golang-standards/project-layout)
-### Note : Be sure to rename the name of module before beginning the project.
+### Note : Be sure to rename the module before beginning the project.
 ## How to start
 
 - install depedency
@@ -58,8 +58,8 @@ Project layout design influenced by [standard go project layout](https://github.
    make seed-up
   ```
 
-# support auto migrate when running app
-You only need to set the env variable DB_AUTO_MIGRATE to true to enable this
+# Support auto migrate when running app
+You only need to set the env variable db_auto_migrate to true to enable this
 ```bash
 db_auto_migrate=true
 ```
