@@ -275,10 +275,12 @@ func replaceInAllDirectories(baseDir string, oldString string, newString string)
 			return err
 		}
 
-		if !info.IsDir() && strings.HasSuffix(info.Name(), ".go") {
-			err = replaceInFile(path, oldString, newString)
-			if err != nil {
-				fmt.Printf("Failed to replace in file %s: %v\n", path, err)
+		if !info.IsDir() {
+			if strings.HasSuffix(info.Name(), ".go") || strings.HasSuffix(info.Name(), ".stub") || strings.HasSuffix(info.Name(), ".mod") {
+				err = replaceInFile(path, oldString, newString)
+				if err != nil {
+					fmt.Printf("Failed to replace in file %s: %v\n", path, err)
+				}
 			}
 		}
 
