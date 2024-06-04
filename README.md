@@ -59,7 +59,7 @@ Project layout design influenced by [standard go project layout](https://github.
   ```
 
 # support auto migrate when running app
-You only need to set the env variable DB_AUTO_MIGRATE to true to enable this
+You only need to set the env variable db_auto_migrate to true to enable this
 ```bash
 db_auto_migrate=true
 ```
