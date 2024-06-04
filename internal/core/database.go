@@ -4,12 +4,14 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/yaza-putu/golang-starter-api/internal/config"
 	"github.com/yaza-putu/golang-starter-api/internal/database"
+	_ "github.com/yaza-putu/golang-starter-api/internal/database/migrations"
 	"github.com/yaza-putu/golang-starter-api/internal/pkg/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"time"
 )
 
 func mysqlDriver() {
@@ -41,6 +43,10 @@ func mysqlDriver() {
 	sqlDb.SetConnMaxLifetime(time.Hour * time.Duration(config.DB().ConnLifetime))
 
 	database.Instance = db
+
+	if config.DB().AutoMigrate == true {
+		database.MigrationUp()
+	}
 }
 
 // Database load instance

@@ -12,6 +12,7 @@ type db struct {
 	Idle         int
 	MaxConn      int
 	ConnLifetime int
+	AutoMigrate  bool
 }
 
 func DB() db {
@@ -25,5 +26,6 @@ func DB() db {
 		Idle:         viper.GetInt("db_max_idle_conn"),
 		MaxConn:      viper.GetInt("db_max_open_conn"),
 		ConnLifetime: viper.GetInt("db_conn_lifetime"),
+		AutoMigrate:  viper.GetBool("db_auto_migrate"),
 	}
 }

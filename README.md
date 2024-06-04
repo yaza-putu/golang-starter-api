@@ -57,13 +57,19 @@ Project layout design influenced by [standard go project layout](https://github.
   ```bash
    make seed-up
   ```
+
+# support auto migrate when running app
+You only need to set the env variable DB_AUTO_MIGRATE to true to enable this
+```bash
+db_auto_migrate=true
+```
   
 # How to mock gorm and redis
 For this template using global variable for database connection and redis connection 
   - if you need mock database in unit test you can use
  ```go
 // import
-import "qila.co.id/internal/database"
+import "github.com/yaza-putu/golang-starter-api/internal/database"
 
 dbMock :=  ...
 
@@ -81,7 +87,7 @@ db, err := gorm.Open(mysql.New(mysql.Config{
 - if you need mock redis in unit test you can use
 ```go
 // import redis client
-import redis_client "qila.co.id/internal/pkg/redis"
+import redis_client "github.com/yaza-putu/golang-starter-api/internal/pkg/redis"
 
 redisMock := ...
 

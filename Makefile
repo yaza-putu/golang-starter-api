@@ -3,6 +3,9 @@ build:
 
 serve:
 	go run cmd/main.go
+	
+server:
+	go run cmd/main.go
 
 config:
 	cp .env.example .env && cp .env.example .env.test
