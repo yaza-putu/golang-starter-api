@@ -25,12 +25,12 @@ Project layout design influenced by [standard go project layout](https://github.
 
 - generate key
   ```bash
-    make key
+  make key
   ```
 
 - run dev mode
   ```bash
-    make serve
+  make serve
   ```
 - build
   ```bash
@@ -39,26 +39,26 @@ Project layout design influenced by [standard go project layout](https://github.
 
 - run test
   ```bash
-   make gotest
+  make gotest
   ```
 
 - make migration
   ```bash
-   make migration table="name_of_table"
+  make migration table="name_of_table"
   ```
   
 - run migration
   ```bash
-   make migrate-up
+  make migrate-up
   ```
 
 - make seeder
-   ```bash
-   make seeder name="name_of_seeder"
+  ```bash
+  make seeder name="name_of_seeder"
   ```
 - run seeder
   ```bash
-   make seed-up
+  make seed-up
   ```
 
 # Support auto migrate when running app
