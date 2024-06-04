@@ -11,6 +11,10 @@ Project layout design influenced by [standard go project layout](https://github.
   # or
   go mod tidy
   ```
+- initialize module name
+```bash
+make init module=your_module_name
+```
 - copy environment dev, test and set app_status=test for .env.test
   ```bash
   make config
