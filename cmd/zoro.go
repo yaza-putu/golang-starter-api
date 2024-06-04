@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -36,6 +37,7 @@ func main() {
 			"- migrate:down",
 			"- make:seeder",
 			"- seed:up",
+			"- configure",
 		}
 		for _, v := range m {
 			fmt.Println(v)
@@ -64,6 +66,9 @@ func main() {
 			case "key:generate":
 				command.keyGenerate()
 				break
+			case "configure:module":
+				command.configure()
+				break
 			}
 		}
 	}
@@ -78,6 +83,7 @@ type (
 		newSeeder() bool
 		upSeeder() bool
 		keyGenerate() bool
+		configure() bool
 	}
 )
 
@@ -188,6 +194,28 @@ func (z *zoroCommand) keyGenerate() bool {
 	return true
 }
 
+func (z *zoroCommand) configure() bool {
+
+	if len(os.Args) != 3 {
+		fmt.Println("ex : configure:module module-name")
+		return false
+	}
+
+	baseDir := "../." // root directory
+	oldModule := "github.com/yaza-putu/golang-starter-api"
+	newModule := os.Args[2]
+
+	fmt.Printf("Processing all .go files in directory: %s\n", baseDir)
+	err := replaceInAllDirectories(baseDir, oldModule, newModule)
+	if err != nil {
+		fmt.Printf("Error processing directories: %v\n", err)
+		return false
+	}
+
+	fmt.Println("Configure module successfully.")
+	return true
+}
+
 func findAndReplaceByKey(key, newValue string) error {
 	filename := ".env"
 	// Read the entire file
@@ -223,4 +251,37 @@ func findAndReplaceByKey(key, newValue string) error {
 	}
 
 	return nil
+}
+
+func replaceInFile(filePath string, oldString string, newString string) error {
+	input, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return err
+	}
+
+	output := strings.ReplaceAll(string(input), oldString, newString)
+
+	err = ioutil.WriteFile(filePath, []byte(output), 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func replaceInAllDirectories(baseDir string, oldString string, newString string) error {
+	return filepath.Walk(baseDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() && strings.HasSuffix(info.Name(), ".go") {
+			err = replaceInFile(path, oldString, newString)
+			if err != nil {
+				fmt.Printf("Failed to replace in file %s: %v\n", path, err)
+			}
+		}
+
+		return nil
+	})
 }

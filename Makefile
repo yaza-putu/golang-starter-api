@@ -15,6 +15,9 @@ tidy:
 key:
 	go run cmd/zoro.go key:generate
 
+init:
+	go run cmd/zoro.go configure:module ${module}
+
 gotest:
 	go test ./test/...
 
