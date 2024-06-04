@@ -58,7 +58,7 @@ Project layout design influenced by [standard go project layout](https://github.
    make seed-up
   ```
 
-# support auto migrate when running app
+# Support auto migrate when running app
 You only need to set the env variable db_auto_migrate to true to enable this
 ```bash
 db_auto_migrate=true
