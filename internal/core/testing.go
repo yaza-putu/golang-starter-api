@@ -1,15 +1,11 @@
 package core
 
 import (
-	"database/sql"
-	"errors"
 	"fmt"
 	"github.com/spf13/viper"
-	"github.com/yaza-putu/golang-starter-api/internal/config"
 	"github.com/yaza-putu/golang-starter-api/internal/database"
-	"github.com/yaza-putu/golang-starter-api/internal/pkg/logger"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	_ "github.com/yaza-putu/golang-starter-api/internal/database/migrations"
+	_ "github.com/yaza-putu/golang-starter-api/internal/database/seeders"
 	"path/filepath"
 	"runtime"
 )
@@ -30,29 +26,20 @@ func EnvTesting() error {
 
 	viper.Set("app_debug", false)
 	viper.Set("app_status", "test")
+	// force auto migrate true
+	viper.Set("db_auto_migrate", true)
+
+	// call database
+	Database()
+
+	// run seeder data
+	database.SeederUp()
+	// run server
+	go HttpServe()
 
 	return err
 }
 
-func DatabaseTesting() error {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", config.DB().User, config.DB().Password, config.DB().Host, config.DB().Port, config.DB().Name)
-
-	sqlDB, err := sql.Open("mysql", dsn)
-	db, err := gorm.Open(mysql.New(mysql.Config{
-		Conn: sqlDB,
-	}), &gorm.Config{})
-
-	if err != nil {
-		if config.App().Debug == true {
-			logger.New(err, logger.SetType(logger.FATAL))
-		} else {
-			logger.New(
-				errors.New("Database connection error, please enable debug mode to view error"),
-				logger.SetType(logger.FATAL),
-			)
-		}
-	}
-
-	database.Instance = db
-	return err
+func EnvRollback() {
+	database.MigrationDown()
 }

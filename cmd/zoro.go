@@ -217,37 +217,40 @@ func (z *zoroCommand) configure() bool {
 }
 
 func findAndReplaceByKey(key, newValue string) error {
-	filename := ".env"
-	// Read the entire file
-	content, err := ioutil.ReadFile(filename)
-	if err != nil {
-		fmt.Println("file .env not found")
-		return err
-	}
+	list := []string{".env", ".env.test"}
 
-	// Split content by lines
-	lines := strings.Split(string(content), "\n")
-
-	// Find and replace the key if found
-	found := false
-	for i, line := range lines {
-		if strings.HasPrefix(line, key+"=") {
-			lines[i] = key + "=" + newValue
-			found = true
-			break
+	for _, filename := range list {
+		// Read the entire file
+		content, err := ioutil.ReadFile(filename)
+		if err != nil {
+			fmt.Println("file .env not found")
+			return err
 		}
-	}
 
-	// If key not found, return an error
-	if !found {
-		return fmt.Errorf("key '%s' not found in file", key)
-	}
+		// Split content by lines
+		lines := strings.Split(string(content), "\n")
 
-	// Write the modified content back to the file
-	output := strings.Join(lines, "\n")
-	err = ioutil.WriteFile(filename, []byte(output), 0644)
-	if err != nil {
-		return err
+		// Find and replace the key if found
+		found := false
+		for i, line := range lines {
+			if strings.HasPrefix(line, key+"=") {
+				lines[i] = key + "=" + newValue
+				found = true
+				break
+			}
+		}
+
+		// If key not found, return an error
+		if !found {
+			return fmt.Errorf("key '%s' not found in file", key)
+		}
+
+		// Write the modified content back to the file
+		output := strings.Join(lines, "\n")
+		err = ioutil.WriteFile(filename, []byte(output), 0644)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

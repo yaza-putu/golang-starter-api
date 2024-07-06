@@ -6,14 +6,9 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"github.com/yaza-putu/golang-starter-api/internal/app/auth/entity"
 	"github.com/yaza-putu/golang-starter-api/internal/config"
 	"github.com/yaza-putu/golang-starter-api/internal/core"
-	"github.com/yaza-putu/golang-starter-api/internal/database"
 	response2 "github.com/yaza-putu/golang-starter-api/internal/http/response"
-	"github.com/yaza-putu/golang-starter-api/internal/pkg/encrypt"
-	"github.com/yaza-putu/golang-starter-api/pkg/unique"
-	"gorm.io/gorm"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -30,81 +25,15 @@ func TestE2ETestSuite(t *testing.T) {
 
 func (s *e2eTestSuite) SetupSuite() {
 	s.Require().NoError(core.EnvTesting())
-	s.Require().NoError(core.DatabaseTesting())
-
-	database.MigrationRegister(func(db *gorm.DB) error {
-		return db.AutoMigrate(&entity.Role{})
-	}, func(db *gorm.DB) error {
-		return db.Migrator().DropTable(&entity.Role{})
-	})
-
-	// migration & seeder
-	database.MigrationRegister(func(db *gorm.DB) error {
-		return db.AutoMigrate(&entity.User{})
-	}, func(db *gorm.DB) error {
-		return db.Migrator().DropTable(&entity.User{})
-	})
-
-	database.MigrationRegister(func(db *gorm.DB) error {
-		return db.AutoMigrate(&entity.RoleUser{})
-	}, func(db *gorm.DB) error {
-		return db.Migrator().DropTable(&entity.RoleUser{})
-	})
-
-	key := unique.Uid(13)
-
-	database.SeederRegister(func(db *gorm.DB) error {
-		m := entity.Roles{
-			entity.Role{
-				ID:   entity.ADM,
-				Name: "adm",
-			},
-			entity.Role{
-				ID:   entity.USR,
-				Name: "usr",
-			},
-		}
-
-		return db.Create(&m).Error
-	})
-
-	database.SeederRegister(func(db *gorm.DB) error {
-		m := entity.Users{
-			entity.User{
-				ID:       key,
-				Name:     "admin",
-				Email:    "admin@qila.co.id",
-				Password: encrypt.Bcrypt("Pzxyz5@#!$"),
-				Avatar:   "assets/images/avatar/default.png",
-			},
-		}
-
-		return db.Create(&m).Error
-	})
-
-	database.SeederRegister(func(db *gorm.DB) error {
-		m := entity.RoleUser{
-			ID:     unique.Key(13),
-			UserId: key,
-			RoleId: entity.ADM,
-		}
-
-		return db.Create(&m).Error
-	})
-
-	database.MigrationUp()
-	database.SeederUp()
-
-	go core.HttpServerTesting()
 }
 
 // this function executes after all tests executed
 func (s *e2eTestSuite) TearDownSuite() {
-	database.MigrationDown()
+	core.EnvRollback()
 }
 
 func (s *e2eTestSuite) TestCreateToken() {
-	reqStr := `{"email":"admin@qila.co.id","password" : "Pzxyz5@#!$"}`
+	reqStr := `{"email":"admin@mail.com","password" : "Password1"}`
 
 	req, err := http.NewRequest(echo.POST, fmt.Sprintf("http://localhost:%d/api/v1/token", config.Host().Port), strings.NewReader(reqStr))
 	s.NoError(err)
@@ -124,7 +53,7 @@ func (s *e2eTestSuite) TestCreateToken() {
 }
 
 func (s *e2eTestSuite) TestWrongCredintial() {
-	reqStr := `{"email":"user@mail.com","password" : "1"}`
+	reqStr := `{"email":"admin@mail.com","password" : "1"}`
 
 	req, err := http.NewRequest(echo.POST, fmt.Sprintf("http://localhost:%d/api/v1/token", config.Host().Port), strings.NewReader(reqStr))
 	s.NoError(err)
@@ -142,7 +71,7 @@ func (s *e2eTestSuite) TestWrongCredintial() {
 }
 
 func (s *e2eTestSuite) TestValidationPassword() {
-	reqStr := `{"email":"user@mail.com","password" : ""}`
+	reqStr := `{"email":"admin@mail.com","password" : ""}`
 
 	req, err := http.NewRequest(echo.POST, fmt.Sprintf("http://localhost:%d/api/v1/token", config.Host().Port), strings.NewReader(reqStr))
 	s.NoError(err)
@@ -179,7 +108,7 @@ func (s *e2eTestSuite) TestValidationEmail() {
 
 func (s *e2eTestSuite) TestRenewalToken() {
 	// get token
-	reqTokenStr := `{"email":"admin@qila.co.id","password" : "Pzxyz5@#!$"}`
+	reqTokenStr := `{"email":"admin@mail.com","password" : "Password1"}`
 
 	reqToken, err := http.NewRequest(echo.POST, fmt.Sprintf("http://localhost:%d/api/v1/token", config.Host().Port), strings.NewReader(reqTokenStr))
 	s.NoError(err)

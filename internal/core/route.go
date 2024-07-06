@@ -26,12 +26,17 @@ func HttpServe() {
 	// register api route
 	routes.Api(e)
 
+	if config.App().Status == "test" {
+		e.HideBanner = true
+		e.Logger.(*log.Logger).SetOutput(ioutil.Discard)
+	} else {
+		// app name
+		fmt.Printf("APP NAME : %s ", config.App().Name)
+	}
+
 	// gracefully shutdown
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
-
-	// app name
-	fmt.Printf("APP NAME : %s ", config.App().Name)
 
 	// start server
 	go func() {
@@ -47,15 +52,4 @@ func HttpServe() {
 	if err := e.Shutdown(ctx); err != nil {
 		e.Logger.Fatal(err)
 	}
-}
-
-func HttpServerTesting() {
-	e := echo.New()
-	// set debug mode
-	e.Debug = config.App().Debug
-	// register api route
-	routes.Api(e)
-	e.HideBanner = true
-	e.Logger.(*log.Logger).SetOutput(ioutil.Discard)
-	e.Logger.Fatal(e.Start(fmt.Sprintf("%s%d", ":", config.Host().Port)))
 }
