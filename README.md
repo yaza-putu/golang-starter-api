@@ -4,7 +4,8 @@
 Project layout design influenced by [standard go project layout](https://github.com/golang-standards/project-layout)
 ## How to start
 
-### By using the tool
+### By using the [Gos Tool](https://github.com/yaza-putu/gos)
+
 ```bash
 go install github.com/yaza-putu/gos@latest
 ```
@@ -19,7 +20,9 @@ gos create --echo
 
 
 ### Manual
-
+```bash
+git clone https://github.com/yaza-putu/golang-starter-api.git && cd golang-starter-api && rm -rf .git
+```
 - install depedency
   ```bash
   make tidy
