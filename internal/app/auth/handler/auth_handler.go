@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"github.com/yaza-putu/golang-starter-api/internal/app/auth/repository"
 	"github.com/yaza-putu/golang-starter-api/internal/app/auth/service"
@@ -8,7 +10,6 @@ import (
 	"github.com/yaza-putu/golang-starter-api/internal/http/request"
 	"github.com/yaza-putu/golang-starter-api/internal/http/response"
 	"github.com/yaza-putu/golang-starter-api/internal/pkg/logger"
-	"net/http"
 )
 
 type authHandler struct {
@@ -39,7 +40,7 @@ func (a *authHandler) Create(ctx echo.Context) error {
 		return ctx.JSON(http.StatusUnprocessableEntity, res)
 	}
 
-	r := a.authService.Login(ctx.Request().Context(), req.Email, req.Password)
+	r := a.authService.Login(req.Email, req.Password)
 
 	return ctx.JSON(r.Code, r)
 }
@@ -63,7 +64,7 @@ func (a *authHandler) Refresh(ctx echo.Context) error {
 		return ctx.JSON(http.StatusUnprocessableEntity, res)
 	}
 
-	r := a.authService.Refresh(ctx.Request().Context(), req.Token)
+	r := a.authService.Refresh(req.Token)
 
 	return ctx.JSON(r.Code, r)
 }

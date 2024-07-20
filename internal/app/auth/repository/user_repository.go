@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"github.com/yaza-putu/golang-starter-api/internal/app/auth/entity"
 	"github.com/yaza-putu/golang-starter-api/internal/database"
 )
@@ -15,7 +16,7 @@ type userRepository struct {
 	entity entity.User
 }
 
-func NewUser() User {
+func NewUser() *userRepository {
 	return &userRepository{
 		entity: entity.User{},
 	}
