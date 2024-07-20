@@ -4,6 +4,22 @@
 Project layout design influenced by [standard go project layout](https://github.com/golang-standards/project-layout)
 ## How to start
 
+### By using the tool
+```bash
+go install github.com/yaza-putu/gos@latest
+```
+If it's not accessible, try moving it to the global bin
+```bash
+ mv ~/go/bin/gos /usr/local/bin
+```
+Create new project with one command
+```bash
+gos create --echo
+```
+
+
+### Manual
+
 - install depedency
   ```bash
   make tidy
