@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	if os.Args[1] != "key:generate" {
+	if os.Args[1] != "key:generate" && os.Args[1] != "configure:module" {
 		core.Env()
 		core.Database()
 	}
@@ -37,7 +37,7 @@ func main() {
 			"- migrate:down",
 			"- make:seeder",
 			"- seed:up",
-			"- configure",
+			"- configure:module",
 		}
 		for _, v := range m {
 			fmt.Println(v)
