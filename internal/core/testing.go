@@ -2,12 +2,15 @@ package core
 
 import (
 	"fmt"
+	"net"
+	"path/filepath"
+	"runtime"
+
 	"github.com/spf13/viper"
+	"github.com/yaza-putu/golang-starter-api/internal/config"
 	"github.com/yaza-putu/golang-starter-api/internal/database"
 	_ "github.com/yaza-putu/golang-starter-api/internal/database/migrations"
 	_ "github.com/yaza-putu/golang-starter-api/internal/database/seeders"
-	"path/filepath"
-	"runtime"
 )
 
 func EnvTesting() error {
@@ -35,11 +38,23 @@ func EnvTesting() error {
 	// run seeder data
 	database.SeederUp()
 	// run server
-	go HttpServe()
+	if !isPortActive() {
+		go HttpServe()
+	}
 
 	return err
 }
 
 func EnvRollback() {
 	database.MigrationDown()
+}
+
+func isPortActive() bool {
+	addr := fmt.Sprintf(":%d", config.Host().Port)
+	ln, err := net.Listen("tcp", addr)
+	if err != nil {
+		return true
+	}
+	ln.Close()
+	return false
 }
