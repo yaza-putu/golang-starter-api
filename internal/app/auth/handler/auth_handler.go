@@ -28,7 +28,7 @@ func (a *authHandler) Create(ctx echo.Context) error {
 	b := ctx.Bind(&req)
 	if b != nil {
 		return ctx.JSON(http.StatusBadRequest, response.Api(
-			response.SetCode(400), response.SetMessage(b.Error()),
+			response.SetMessage(b.Error()),
 		))
 	}
 
@@ -42,7 +42,7 @@ func (a *authHandler) Create(ctx echo.Context) error {
 
 	r := a.authService.Login(req.Email, req.Password)
 
-	return ctx.JSON(r.Code, r)
+	return ctx.JSON(r.GetCode(), r)
 }
 
 func (a *authHandler) Refresh(ctx echo.Context) error {
@@ -52,7 +52,7 @@ func (a *authHandler) Refresh(ctx echo.Context) error {
 	b := ctx.Bind(&req)
 	if b != nil {
 		return ctx.JSON(http.StatusBadRequest, response.Api(
-			response.SetCode(400), response.SetMessage(b.Error()),
+			response.SetMessage(b.Error()),
 		))
 	}
 
@@ -66,5 +66,5 @@ func (a *authHandler) Refresh(ctx echo.Context) error {
 
 	r := a.authService.Refresh(req.Token)
 
-	return ctx.JSON(r.Code, r)
+	return ctx.JSON(r.GetCode(), r)
 }

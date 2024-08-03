@@ -1,9 +1,10 @@
 package main
 
 import (
+	"runtime"
+
 	"github.com/yaza-putu/golang-starter-api/internal/config"
 	"github.com/yaza-putu/golang-starter-api/internal/core"
-	"runtime"
 )
 
 func main() {

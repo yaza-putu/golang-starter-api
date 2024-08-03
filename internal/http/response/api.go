@@ -1,7 +1,5 @@
 // Package response api
 // default response
-// code : 200
-// status : true
 // data : nil
 // message : nil
 package response
@@ -10,10 +8,10 @@ type (
 	optFunc func(*res)
 
 	res struct {
-		Code    int `json:"code,omitempty"`
-		Data    any `json:"data,omitempty"`
-		Message any `json:"message,omitempty"`
-		Errors  any `json:"errors,omitempty"`
+		Code    *int `json:"-"` // remove "-" to show the code on json response
+		Data    any  `json:"data,omitempty"`
+		Message any  `json:"message,omitempty"`
+		Errors  any  `json:"errors,omitempty"`
 	}
 
 	DataApi struct {
@@ -23,7 +21,7 @@ type (
 
 func defaultResponse() res {
 	return res{
-		Code:    200,
+		Code:    nil,
 		Data:    nil,
 		Message: nil,
 		Errors:  nil,
@@ -32,7 +30,7 @@ func defaultResponse() res {
 
 func SetCode(code int) optFunc {
 	return func(r *res) {
-		r.Code = code
+		r.Code = &code
 	}
 }
 
@@ -55,7 +53,7 @@ func SetError(e any) optFunc {
 }
 
 func (r *res) GetCode() int {
-	return r.Code
+	return *r.Code
 }
 
 func (r *res) GetData() any {
@@ -83,16 +81,16 @@ func Api(opts ...optFunc) DataApi {
 }
 
 func TimeOut() DataApi {
-	return Api(SetCode(408), SetMessage("Request timeout or canceled by user"))
+	return Api(
+		SetCode(408),
+		SetMessage("Request timeout or canceled by user"),
+	)
 }
 
 func BadRequest(err error) DataApi {
-	return DataApi{
-		res: res{
-			Code:    400,
-			Data:    nil,
-			Message: "bad request",
-			Errors:  err,
-		},
-	}
+	return Api(
+		SetCode(400),
+		SetMessage("bad request"),
+		SetError(err),
+	)
 }
