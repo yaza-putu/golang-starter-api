@@ -1,0 +1,6 @@
+greeting: "Welcome"
+validations:
+  unique: "The {0} already exists in database"
+  filetype: "The type of {0} not allowed, allow only {1}"
+  when: "{0} is a required"
+  badrequest: "Unprocessable Content"

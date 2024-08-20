@@ -1,0 +1,6 @@
+greeting: "Selamat Datang"
+validations:
+  unique: "{0} ini sudah terdaftar di database"
+  filetype: "Tipe data dari {0} tidak diijinkan, hanya diijinkan {1}"
+  when: "{0} wajib di isi"
+  badrequest: "Konten Tidak Dapat Diproses"

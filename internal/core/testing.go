@@ -37,6 +37,10 @@ func EnvTesting() error {
 
 	// run seeder data
 	database.SeederUp()
+
+	// run i18n
+	I18n()
+
 	// run server
 	if !isPortActive() {
 		go HttpServe()

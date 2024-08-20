@@ -14,6 +14,9 @@ func main() {
 	// load env
 	core.Env()
 
+	// load i18n
+	core.I18n()
+
 	// init database
 	core.Database()
 

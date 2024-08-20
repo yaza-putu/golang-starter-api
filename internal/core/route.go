@@ -3,7 +3,7 @@ package core
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"os/signal"
@@ -23,12 +23,14 @@ func HttpServe() {
 	e.Debug = config.App().Debug
 	// handle error panic in http req & res
 	e.Use(middleware.PanicMiddleware)
+	// i18n
+	e.Use(middleware.I18nMiddleware)
 	// register api route
 	routes.Api(e)
 
 	if config.App().Status == "test" {
 		e.HideBanner = true
-		e.Logger.(*log.Logger).SetOutput(ioutil.Discard)
+		e.Logger.(*log.Logger).SetOutput(io.Discard)
 	} else {
 		// app name
 		fmt.Printf("APP NAME : %s ", config.App().Name)
