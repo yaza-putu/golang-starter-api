@@ -1,9 +1,11 @@
 package logger
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/labstack/gommon/log"
@@ -26,6 +28,14 @@ type (
 	opts    struct {
 		Write bool
 		Type  Lvl
+	}
+	LogEntry struct {
+		Time       string   `json:"time"`
+		Level      string   `json:"level"`
+		File       string   `json:"file"`
+		Line       int      `json:"line"`
+		Message    string   `json:"message"`
+		StackTrace []string `json:"stacktrace"`
 	}
 )
 
@@ -92,7 +102,42 @@ func writeError(err error, l Lvl) {
 	}
 	defer logFile.Close()
 
-	log.SetOutput(logFile)
+	// get location error
+	_, file, line, ok := runtime.Caller(2)
+	if !ok {
+		file = "-"
+		line = 0
+	}
+
+	// get stack trace
+	var pcs [4]uintptr
+	n := runtime.Callers(3, pcs[:])
+
+	frames := runtime.CallersFrames(pcs[:n])
+	errors := []string{}
+	for {
+		frame, more := frames.Next()
+		// capture error with location file, line code and function to easy debug
+		errors = append(errors, fmt.Sprintf("\t%s:%d %s\n", frame.File, frame.Line, frame.Function))
+		if !more {
+			break
+		}
+	}
+
+	// create log entry
+	entry := LogEntry{
+		Time:       time.Now().Format(time.RFC3339),
+		Level:      getlabel(l),
+		File:       file,
+		Line:       line,
+		Message:    err.Error(),
+		StackTrace: errors,
+	}
+
+	// encode entry to JSON
+	entryJSON, _ := json.Marshal(entry)
+	_, _ = logFile.Write(entryJSON)
+	_, _ = logFile.Write([]byte("\n"))
 
 	switch l {
 	case INFO:
