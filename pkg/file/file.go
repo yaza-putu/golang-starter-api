@@ -2,12 +2,13 @@ package file
 
 import (
 	"fmt"
-	"github.com/yaza-putu/golang-starter-api/pkg/unique"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/yaza-putu/golang-starter-api/pkg/unique"
 )
 
 // ToPublic folder
@@ -23,7 +24,7 @@ func ToPublic(file *multipart.FileHeader, dest string, randomName bool) (string,
 	fileName := file.Filename
 	if randomName {
 		split := strings.Split(file.Filename, ".")
-		fileName = fmt.Sprintf("%s.%s", unique.Uid(13), split[len(split)-1])
+		fileName = fmt.Sprintf("%s.%s", unique.Uid(), split[len(split)-1])
 	}
 
 	destPath := fmt.Sprintf("public/%s/%s", dest, fileName)
@@ -61,7 +62,7 @@ func ToPrivate(file *multipart.FileHeader, dest string, randomName bool) (string
 	fileName := file.Filename
 	if randomName {
 		split := strings.Split(file.Filename, ".")
-		fileName = fmt.Sprintf("%s.%s", unique.Uid(13), split[len(split)-1])
+		fileName = fmt.Sprintf("%s.%s", unique.Uid(), split[len(split)-1])
 	}
 
 	destPath := fmt.Sprintf("storage/%s/%s", dest, fileName)

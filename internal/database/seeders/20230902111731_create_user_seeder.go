@@ -10,7 +10,7 @@ import (
 
 // / please replace &entities.Name{} and insert data
 func init() {
-	key := unique.Uid(13)
+	key := unique.Uid()
 	database.SeederRegister(func(db *gorm.DB) error {
 		m := entity.Users{
 			entity.User{
@@ -27,7 +27,7 @@ func init() {
 
 	database.SeederRegister(func(db *gorm.DB) error {
 		m := entity.RoleUser{
-			ID:     unique.Key(13),
+			ID:     unique.Uid(),
 			UserId: key,
 			RoleId: entity.ADM,
 		}
