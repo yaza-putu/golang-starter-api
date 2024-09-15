@@ -1,6 +1,7 @@
 package i18n
 
 import (
+	"strings"
 	texttemplate "text/template"
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -80,8 +81,25 @@ func T(localize Localize) string {
 // get active locale
 func Locale() string {
 	if lang.locale != "" {
-		return lang.locale
+		return simplyLang(lang.locale)
 	}
 
 	return config.App().Lang
+}
+
+func simplyLang(locale string) string {
+	languages := strings.Split(locale, ",")
+
+	lang := config.App().Lang
+
+	for _, l := range languages {
+		l = strings.Split(l, ";")[0]
+		l = strings.Split(l, "-")[0]
+		l = strings.TrimSpace(l)
+		if l != "" {
+			lang = l
+		}
+	}
+
+	return lang
 }
