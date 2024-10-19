@@ -9,14 +9,16 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"github.com/yaza-putu/golang-starter-api/internal/app/auth/entity"
+	"github.com/yaza-putu/golang-starter-api/internal/app/auth/repository"
 	"github.com/yaza-putu/golang-starter-api/internal/config"
 	"github.com/yaza-putu/golang-starter-api/internal/pkg/logger"
+	"github.com/yaza-putu/golang-starter-api/pkg/unique"
 )
 
 // Token / **************************************************************
 type Token interface {
-	Create(user entity.User) (string, string, error)
-	Refresh(rToken string) (string, error)
+	Create(user entity.User, ip string, device string) (string, string, error)
+	Refresh(deviceId string) (string, string, error)
 	generateToken(claims jwt.Claims) (string, error)
 	generateRefreshToken(claims jwt.Claims) (string, error)
 }
@@ -41,9 +43,9 @@ func NewToken() Token {
 
 // Create token
 // return arg1 string token
-// return arg2 string refresh token
+// return arg2 string deviceId
 // return arg3 error error
-func (t *tokenService) Create(user entity.User) (token string, rToken string, e error) {
+func (t *tokenService) Create(user entity.User, ip string, device string) (token string, deviceId string, e error) {
 	token, err := t.generateToken(&jwtTokenClaims{
 		Email: user.Email,
 		StandardClaims: jwt.StandardClaims{
@@ -68,18 +70,41 @@ func (t *tokenService) Create(user entity.User) (token string, rToken string, e 
 		return "", "", err
 	}
 
-	return token, refresh, nil
+	// gen device ID
+	dId := unique.Key(52)
+
+	// store refresh token
+	_, err = repository.NewUserToken().Create(entity.UserToken{
+		ID:        unique.Uid(),
+		UserId:    user.ID,
+		TokenType: entity.REFRESH_TOKEN,
+		DeviceId:  dId,
+		Token:     refresh,
+		Device:    device,
+		IP:        ip,
+	})
+
+	if err != nil {
+		logger.New(err)
+		return "", "", err
+	}
+
+	return token, dId, nil
 }
 
-func (t *tokenService) Refresh(rToken string) (token string, e error) {
-	if !strings.Contains(rToken, ".") {
-		return "", errors.New("invalid token")
+func (t *tokenService) Refresh(deviceId string) (token string, devId string, e error) {
+	// get refresh token by device ID
+	userTokenRepository := repository.NewUserToken()
+
+	userToken, errToken := userTokenRepository.FindByDeviceId(deviceId)
+	if errToken != nil {
+		return "", "", errToken
 	}
 
 	// token string to slice
-	sToken := strings.Split(rToken, ".")
+	sToken := strings.Split(userToken.Token, ".")
 	if len(sToken) != 3 {
-		return "", errors.New("invalid token")
+		return "", "", errors.New("invalid token")
 	}
 	// decode base64 from token
 	var decodedByte, errDecode = base64.StdEncoding.DecodeString(sToken[1])
@@ -91,12 +116,12 @@ func (t *tokenService) Refresh(rToken string) (token string, e error) {
 		logger.New(err, logger.SetType(logger.ERROR))
 	}
 	// claim data from refresh token
-	var tx, err = jwt.ParseWithClaims(rToken, claims, func(token *jwt.Token) (interface{}, error) {
+	var tx, err = jwt.ParseWithClaims(userToken.Token, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(config.Key().Refresh), nil
 	})
 	if err != nil {
 		logger.New(err)
-		return "", err
+		return "", "", err
 	}
 
 	dataClaim := tx.Claims.(jwt.MapClaims)
@@ -111,9 +136,18 @@ func (t *tokenService) Refresh(rToken string) (token string, e error) {
 	nToken, err := t.generateToken(newClaimToken)
 	if err != nil {
 		logger.New(err)
-		return "", err
+		return "", "", err
 	}
-	return nToken, nil
+
+	// generate new device ID
+	dId := unique.Key(52)
+	userToken.DeviceId = dId
+	_, err = userTokenRepository.Update(userToken.ID, userToken)
+	if err != nil {
+		return "", "", err
+	}
+
+	return nToken, dId, nil
 }
 
 func (t *tokenService) generateToken(claims jwt.Claims) (string, error) {

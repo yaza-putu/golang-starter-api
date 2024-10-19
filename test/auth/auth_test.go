@@ -126,7 +126,7 @@ func (s *e2eTestSuite) TestRenewalToken() {
 	s.NoError(err)
 	token := bodyToken.Data.(map[string]any)
 
-	reqRefTokenStr := fmt.Sprintf(`{"refresh_token":"%s"}`, token["refresh_token"].(string))
+	reqRefTokenStr := fmt.Sprintf(`{"device_id":"%s"}`, token["device_id"].(string))
 
 	reqRToken, err := http.NewRequest(echo.PUT, fmt.Sprintf("http://localhost:%d/api/v1/token", config.Host().Port), strings.NewReader(reqRefTokenStr))
 	s.NoError(err)
@@ -146,7 +146,7 @@ func (s *e2eTestSuite) TestRenewalToken() {
 
 func (s *e2eTestSuite) TestFailedRenewalToken() {
 
-	reqRefTokenStr := fmt.Sprintf(`{"refresh_token":"%s"}`, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9raW5hd2FAbWFpbC5jb20iLCJvbGRfdG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKbGJXRnBiQ0k2SW1Ga2JXbHVRSEZwYkdFdVkyOHVhV1FpTENKbGVIQWlPakUzTURRMk16QTVNakY5LnNaMzJWdzE2cEZHSjBYY2hYUXpEYXVBMWRxWjBJZ1pmOWZZZndsaHBqc0EiLCJleHAiOjE3MDQ3MTY3MjF9.uY6dIw9skBpGm6qnzdHsY2rHrRALn9I_t6F1OeYzvwg")
+	reqRefTokenStr := fmt.Sprintf(`{"device_id":"%s"}`, "xys")
 
 	reqRToken, err := http.NewRequest(echo.PUT, fmt.Sprintf("http://localhost:%d/api/v1/token", config.Host().Port), strings.NewReader(reqRefTokenStr))
 	s.NoError(err)
@@ -158,7 +158,7 @@ func (s *e2eTestSuite) TestFailedRenewalToken() {
 	resRToken, err := client2.Do(reqRToken)
 	s.NoError(err)
 
-	s.Equal(http.StatusInternalServerError, resRToken.StatusCode)
+	s.Equal(http.StatusBadRequest, resRToken.StatusCode)
 
 	resRToken.Body.Close()
 }

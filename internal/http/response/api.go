@@ -91,6 +91,6 @@ func BadRequest(err error) DataApi {
 	return Api(
 		SetCode(400),
 		SetMessage("bad request"),
-		SetError(err),
+		SetError(err.Error()),
 	)
 }

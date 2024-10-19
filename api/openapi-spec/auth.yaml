@@ -17,7 +17,7 @@ paths:
       tags:
         - Create
       summary: Create a token
-      description: Two tokens will be generated in response an access token and a refresh token.
+      description: When we create a token, the backend will send the access token and device ID, and the response will include an automatically set cookie for device ID
       requestBody:
         required: true
         content:
@@ -66,7 +66,7 @@ paths:
                     type: object
                     example: {
                       "access_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHFpbGEuY28uaWQiLCJleHAiOjE3MDY3MDY3NTd9.Ul-iTRe0f43Fv_BH-jsIrD0N7v8q27Dme1uSNMBT2fI",
-                      "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHFpbGEuY28uaWQiLCJvbGRfdG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKbGJXRnBiQ0k2SW1Ga2JXbHVRSEZwYkdFdVkyOHVhV1FpTENKbGVIQWlPakUzTURZM01EWTNOVGQ5LlVsLWlUUmUwZjQzRnZfQkgtanNJckQwTjd2OHEyN0RtZTF1U05NQlQyZkkiLCJleHAiOjE3MDY3OTI1NTd9.x5ArsCOTlEPLl-si3NV1R3BUHicus0rPBNOPlMb6kiU",
+                      "device_id": "rQUjeKHuLkPeN@f4QdPc7R7PvMGcEfztnzw7czHAoG#qY@vJYQsZ",
                     }
                   message:
                     type: string
@@ -94,30 +94,30 @@ paths:
     put:
       tags:
         - Refresh
-      summary: Create a new token
-      description: Generate a new token with a refreshed key token
+      summary: Create a new token by device id
+      description: We can attach the device ID through the request body or cookie with the key DVID.
       requestBody:
         content:
           application/json:
             schema:
               type: object
               required: [
-                "refresh_token"
+                "device_id"
               ]
               properties:
-                refresh_token:
+                device_id:
                   type: string
-                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHFpbGEuY28uaWQiLCJvbGRfdG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKbGJXRnBiQ0k2SW1Ga2JXbHVRSEZwYkdFdVkyOHVhV1FpTENKbGVIQWlPakUzTURZM01EWTNOVGQ5LlVsLWlUUmUwZjQzRnZfQkgtanNJckQwTjd2OHEyN0RtZTF1U05NQlQyZkkiLCJleHAiOjE3MDY3OTI1NTd9.x5ArsCOTlEPLl-si3NV1R3BUHicus0rPBNOPlMb6kiU"
+                  example: "rQUjeKHuLkPeN@f4QdPc7R7PvMGcEfztnzw7czHAoG#qY@vJYQsZ"
           multipart/form-data:
             schema:
               type: object
               required: [
-                "refresh_token"
+                "device_id"
               ]
               properties:
-                refresh_token:
+                device_id:
                   type: string
-                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHFpbGEuY28uaWQiLCJvbGRfdG9rZW4iOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKbGJXRnBiQ0k2SW1Ga2JXbHVRSEZwYkdFdVkyOHVhV1FpTENKbGVIQWlPakUzTURZM01EWTNOVGQ5LlVsLWlUUmUwZjQzRnZfQkgtanNJckQwTjd2OHEyN0RtZTF1U05NQlQyZkkiLCJleHAiOjE3MDY3OTI1NTd9.x5ArsCOTlEPLl-si3NV1R3BUHicus0rPBNOPlMb6kiU"
+                  example: "rQUjeKHuLkPeN@f4QdPc7R7PvMGcEfztnzw7czHAoG#qY@vJYQsZ"
       responses:
         '200':
           description: ok
@@ -127,7 +127,10 @@ paths:
                 type: object
                 example: {
                   code : 200,
-                  data : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHFpbGEuY28uaWQiLCJleHAiOjE3MDY3MDY3NTd9.Ul-iTRe0f43Fv_BH-jsIrD0N7v8q27Dme1uSNMBT2fI"
+                  data : {
+                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHFpbGEuY28uaWQiLCJleHAiOjE3MDY3MDY3NTd9.Ul-iTRe0f43Fv_BH-jsIrD0N7v8q27Dme1uSNMBT2fI",
+                    device_id: "29GIIQVt2RSSn@xdePvQKkq1X2Wf3$dS9Ui4sB95#facUsMyUXo3"
+                  }
                 }
         422:
           description: "Unprocessable Content"
@@ -139,7 +142,7 @@ paths:
                     code: 422,
                     message: "bad request",
                     errors: {
-                      "token": [ "Token is a required field" ]
+                      "token": [ "DeviceId is a required field" ]
                     }
                   }
 
